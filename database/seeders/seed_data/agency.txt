@@ -1,0 +1,2 @@
+agency_id,agency_name,agency_url,agency_timezone,agency_lang,agency_phone,agency_fare_url,agency_email
+vivi,Vivi,https://www.vivi.lv,Europe/Riga,lv,80007600,,vilciens@info.vivi.lv

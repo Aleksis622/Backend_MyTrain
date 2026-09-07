@@ -1,0 +1,49 @@
+route_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color
+446-1-V,,Zilupe - Rīga,,2,,B388FF,000000
+243-1-V,,Daugavpils - Rīga,,2,,B388FF,000000
+349-1-V,,Jelgava - Rīga,,2,,EA5E42,000000
+397-1-V,,Tukums II - Rīga,,2,,38B6FC,000000
+399-1-V,,Skulte - Rīga,,2,,F8DB22,000000
+298-1-V,,Lielvārde - Rīga,,2,,B388FF,000000
+300-1-V,,Liepāja - Rīga,,2,,EA5E42,000000
+432-1-V,,Valmiera - Rīga,,2,,8BC34A,000000
+203-1-V,,Aizkraukle - Rīga,,2,,B388FF,000000
+315-1-V,,Madona - Rīga,,2,,B388FF,000000
+1-349-V,,Rīga - Jelgava,,2,,EA5E42,000000
+1-203-V,,Rīga - Aizkraukle,,2,,B388FF,000000
+1-397-V,,Rīga - Tukums II,,2,,38B6FC,000000
+460-1-V,,Valga - Rīga,,2,,8BC34A,000000
+313-1-V,,Indra - Rīga,,2,,B388FF,000000
+1-394-V,,Rīga - Sloka,,2,,38B6FC,000000
+286-1-V,,Ķemeri - Rīga,,2,,38B6FC,000000
+1-399-V,,Rīga - Skulte,,2,,F8DB22,000000
+1-339-V,,Rīga - Ogre,,2,,B388FF,000000
+398-1-V,,Saulkrasti - Rīga,,2,,F8DB22,000000
+1-398-V,,Rīga - Saulkrasti,,2,,F8DB22,000000
+1-432-V,,Rīga - Valmiera,,2,,8BC34A,000000
+1-298-V,,Rīga - Lielvārde,,2,,B388FF,000000
+394-1-V,,Sloka - Rīga,,2,,38B6FC,000000
+396-1-V,,Tukums I - Rīga,,2,,38B6FC,000000
+339-1-V,,Ogre - Rīga,,2,,B388FF,000000
+1-243-V,,Rīga - Daugavpils,,2,,B388FF,000000
+1-252-V,,Rīga - Dubulti,,2,,38B6FC,000000
+408-1-V,,Sigulda - Rīga,,2,,8BC34A,000000
+233-1-V,,Cēsis - Rīga,,2,,8BC34A,000000
+1-408-V,,Rīga - Sigulda,,2,,8BC34A,000000
+1-446-V,,Rīga - Zilupe,,2,,B388FF,000000
+252-1-V,,Dubulti - Rīga,,2,,38B6FC,000000
+1-230-V,,Rīga - Carnikava,,2,,F8DB22,000000
+1-460-V,,Rīga - Valga,,2,,8BC34A,000000
+230-1-V,,Carnikava - Rīga,,2,,F8DB22,000000
+1-286-V,,Rīga - Ķemeri,,2,,38B6FC,000000
+1-311-V,,Rīga - Ludza,,2,,B388FF,000000
+1-233-V,,Rīga - Cēsis,,2,,8BC34A,000000
+1-313-V,,Rīga - Indra,,2,,B388FF,000000
+311-1-V,,Ludza - Rīga,,2,,B388FF,000000
+1-300-V,,Rīga - Liepāja,,2,,EA5E42,000000
+1-291-V,,Rīga - Gulbene,,2,,B388FF,000000
+1-396-V,,Rīga - Tukums I,,2,,38B6FC,000000
+291-1-V,,Gulbene - Rīga,,2,,B388FF,000000
+1-269-V,,Rīga - Krāslava,,2,,B388FF,000000
+1-315-V,,Rīga - Madona,,2,,B388FF,000000
+269-1-V,,Krāslava - Rīga,,2,,B388FF,000000

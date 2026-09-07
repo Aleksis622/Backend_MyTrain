@@ -1,0 +1,366 @@
+route_id,service_id,trip_id,trip_headsign,shape_id
+446-1-V,reuse_cal4,811,Zilupe - Rīga,ZILRIG
+243-1-V,reuse_cal4,821,Daugavpils - Rīga,DAUGRIG
+349-1-V,reuse_cal6,6702,Jelgava - Rīga,JELRIG
+397-1-V,reuse_cal1,6502,Tukums II - Rīga,TUKIIRIG
+399-1-V,reuse_cal7,6101,Skulte - Rīga,SKULRIG
+298-1-V,reuse_cal6,6201,Lielvārde - Rīga,LIELVRIG
+300-1-V,reuse_cal1,724,Liepāja - Rīga,LIEPRIG
+432-1-V,reuse_cal7,865,Valmiera - Rīga,VALMRIG
+203-1-V,reuse_cal4,6203,Aizkraukle - Rīga,AIZKRIG
+315-1-V,reuse_cal5,815,Madona - Rīga,MADRIG
+1-349-V,reuse_cal3,6871,Rīga - Jelgava,RIGJEL
+1-203-V,reuse_cal4,6202,Rīga - Aizkraukle,RIGAIZK
+1-397-V,reuse_cal1,6501,Rīga - Tukums II,RIGTUKII
+460-1-V,reuse_cal7,875,Valga - Rīga,VALGRIG
+313-1-V,reuse_cal19,707,Indra - Rīga,INDRIG
+397-1-V,reuse_cal1,6506,Tukums II - Rīga,TUKIIRIG
+1-394-V,reuse_cal1,6401,Rīga - Sloka,RIGSLOK
+286-1-V,reuse_cal1,6504,Ķemeri - Rīga,KEMRIG
+1-349-V,reuse_cal6,6701,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6102,Rīga - Skulte,RIGSKUL
+349-1-V,reuse_cal6,6704,Jelgava - Rīga,JELRIG
+1-339-V,reuse_cal5,6204,Rīga - Ogre,RIGOGRE
+397-1-V,reuse_cal1,6508,Tukums II - Rīga,TUKIIRIG
+298-1-V,reuse_cal6,6205,Lielvārde - Rīga,LIELVRIG
+398-1-V,reuse_cal7,6103,Saulkrasti - Rīga,SAULKRIG
+1-394-V,reuse_cal1,6403,Rīga - Sloka,RIGSLOK
+203-1-V,reuse_cal4,6207,Aizkraukle - Rīga,AIZKRIG
+1-349-V,reuse_cal3,6873,Rīga - Jelgava,RIGJEL
+349-1-V,reuse_cal26,6872,Jelgava - Rīga,JELRIG
+1-398-V,reuse_cal13,6104,Rīga - Saulkrasti,RIGSAULK
+1-203-V,reuse_cal4,6206,Rīga - Aizkraukle,RIGAIZK
+399-1-V,reuse_cal7,6105,Skulte - Rīga,SKULRIG
+432-1-V,reuse_cal25,863,Valmiera - Rīga,VALMRIG
+1-339-V,reuse_cal5,6208,Rīga - Ogre,RIGOGRE
+1-432-V,reuse_cal16,862,Rīga - Valmiera,RIGVALM
+1-397-V,reuse_cal1,6503,Rīga - Tukums II,RIGTUKII
+1-349-V,reuse_cal6,6705,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6106,Rīga - Skulte,RIGSKUL
+1-298-V,reuse_cal4,6210,Rīga - Lielvārde,RIGLIELV
+394-1-V,reuse_cal1,6402,Sloka - Rīga,SLOKRIG
+349-1-V,reuse_cal6,6708,Jelgava - Rīga,JELRIG
+396-1-V,reuse_cal1,6510,Tukums I - Rīga,TUKIRIG
+1-394-V,reuse_cal3,6405,Rīga - Sloka,RIGSLOK
+298-1-V,reuse_cal6,6211,Lielvārde - Rīga,LIELVRIG
+398-1-V,reuse_cal7,6107,Saulkrasti - Rīga,SAULKRIG
+339-1-V,reuse_cal3,6209,Ogre - Rīga,OGRERIG
+1-394-V,reuse_cal1,6407,Rīga - Sloka,RIGSLOK
+1-243-V,reuse_cal4,802,Rīga - Daugavpils,RIGDAUG
+203-1-V,reuse_cal16,6215,Aizkraukle - Rīga,AIZKRIG
+1-349-V,reuse_cal28,6875,Rīga - Jelgava,RIGJEL
+349-1-V,reuse_cal3,6874,Jelgava - Rīga,JELRIG
+1-398-V,reuse_cal13,6108,Rīga - Saulkrasti,RIGSAULK
+1-203-V,reuse_cal4,6212,Rīga - Aizkraukle,RIGAIZK
+397-1-V,reuse_cal1,6512,Tukums II - Rīga,TUKIIRIG
+394-1-V,reuse_cal1,6404,Sloka - Rīga,SLOKRIG
+399-1-V,reuse_cal7,6109,Skulte - Rīga,SKULRIG
+1-252-V,reuse_cal3,6301,Rīga - Dubulti,RIGDUB
+408-1-V,reuse_cal16,849,Sigulda - Rīga,SIGRIG
+233-1-V,reuse_cal16,847,Cēsis - Rīga,CESRIG
+339-1-V,reuse_cal3,6213,Ogre - Rīga,OGRERIG
+1-397-V,reuse_cal1,6505,Rīga - Tukums II,RIGTUKII
+394-1-V,reuse_cal3,6406,Sloka - Rīga,SLOKRIG
+1-349-V,reuse_cal6,6709,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6110,Rīga - Skulte,RIGSKUL
+349-1-V,reuse_cal6,6712,Jelgava - Rīga,JELRIG
+1-298-V,reuse_cal4,6214,Rīga - Lielvārde,RIGLIELV
+243-1-V,reuse_cal4,813,Daugavpils - Rīga,DAUGRIG
+1-252-V,reuse_cal3,6303,Rīga - Dubulti,RIGDUB
+298-1-V,reuse_cal6,6217,Lielvārde - Rīga,LIELVRIG
+398-1-V,reuse_cal13,6111,Saulkrasti - Rīga,SAULKRIG
+1-408-V,reuse_cal16,830,Rīga - Sigulda,RIGSIG
+1-394-V,reuse_cal1,6409,Rīga - Sloka,RIGSLOK
+1-446-V,reuse_cal4,804,Rīga - Zilupe,RIGZIL
+1-349-V,reuse_cal3,6877,Rīga - Jelgava,RIGJEL
+349-1-V,reuse_cal3,6876,Jelgava - Rīga,JELRIG
+203-1-V,reuse_cal4,6219,Aizkraukle - Rīga,AIZKRIG
+252-1-V,reuse_cal3,6302,Dubulti - Rīga,DUBRIG
+394-1-V,reuse_cal1,6408,Sloka - Rīga,SLOKRIG
+1-298-V,reuse_cal6,6216,Rīga - Lielvārde,RIGLIELV
+397-1-V,reuse_cal1,6514,Tukums II - Rīga,TUKIIRIG
+1-230-V,reuse_cal13,6112,Rīga - Carnikava,RIGCARN
+1-252-V,reuse_cal3,6305,Rīga - Dubulti,RIGDUB
+399-1-V,reuse_cal7,6113,Skulte - Rīga,SKULRIG
+1-397-V,reuse_cal1,6507,Rīga - Tukums II,RIGTUKII
+1-349-V,reuse_cal6,6713,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6114,Rīga - Skulte,RIGSKUL
+349-1-V,reuse_cal6,6716,Jelgava - Rīga,JELRIG
+1-203-V,reuse_cal6,6218,Rīga - Aizkraukle,RIGAIZK
+252-1-V,reuse_cal3,6304,Dubulti - Rīga,DUBRIG
+298-1-V,reuse_cal6,6221,Lielvārde - Rīga,LIELVRIG
+398-1-V,reuse_cal13,6117,Saulkrasti - Rīga,SAULKRIG
+1-394-V,reuse_cal1,6411,Rīga - Sloka,RIGSLOK
+203-1-V,reuse_cal6,6223,Aizkraukle - Rīga,AIZKRIG
+349-1-V,reuse_cal26,6878,Jelgava - Rīga,JELRIG
+252-1-V,reuse_cal3,6306,Dubulti - Rīga,DUBRIG
+394-1-V,reuse_cal1,6410,Sloka - Rīga,SLOKRIG
+1-339-V,reuse_cal4,6220,Rīga - Ogre,RIGOGRE
+397-1-V,reuse_cal1,6516,Tukums II - Rīga,TUKIIRIG
+399-1-V,reuse_cal7,6119,Skulte - Rīga,SKULRIG
+432-1-V,reuse_cal15,861,Valmiera - Rīga,VALMRIG
+408-1-V,reuse_cal15,831,Sigulda - Rīga,SIGRIG
+1-460-V,reuse_cal17,872,Rīga - Valga,RIGVALG
+1-397-V,reuse_cal1,6509,Rīga - Tukums II,RIGTUKII
+1-349-V,reuse_cal6,6715,Rīga - Jelgava,RIGJEL
+1-398-V,reuse_cal7,6118,Rīga - Saulkrasti,RIGSAULK
+1-203-V,reuse_cal4,6222,Rīga - Aizkraukle,RIGAIZK
+349-1-V,reuse_cal6,6720,Jelgava - Rīga,JELRIG
+1-394-V,reuse_cal1,6413,Rīga - Sloka,RIGSLOK
+1-243-V,reuse_cal4,702,Rīga - Daugavpils,RIGDAUG
+397-1-V,reuse_cal1,6518,Tukums II - Rīga,TUKIIRIG
+394-1-V,reuse_cal1,6412,Sloka - Rīga,SLOKRIG
+339-1-V,reuse_cal4,6225,Ogre - Rīga,OGRERIG
+230-1-V,reuse_cal32,6121,Carnikava - Rīga,CARNRIG
+399-1-V,reuse_cal7,6123,Skulte - Rīga,SKULRIG
+298-1-V,reuse_cal6,6227,Lielvārde - Rīga,LIELVRIG
+1-286-V,reuse_cal1,6511,Rīga - Ķemeri,RIGKEM
+203-1-V,reuse_cal4,6229,Aizkraukle - Rīga,AIZKRIG
+1-349-V,reuse_cal29,6717,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6122,Rīga - Skulte,RIGSKUL
+349-1-V,reuse_cal6,6722,Jelgava - Rīga,JELRIG
+1-298-V,reuse_cal4,6224,Rīga - Lielvārde,RIGLIELV
+243-1-V,reuse_cal4,801,Daugavpils - Rīga,DAUGRIG
+1-394-V,reuse_cal1,6415,Rīga - Sloka,RIGSLOK
+1-408-V,reuse_cal17,834,Rīga - Sigulda,RIGSIG
+397-1-V,reuse_cal1,6520,Tukums II - Rīga,TUKIIRIG
+394-1-V,reuse_cal1,6414,Sloka - Rīga,SLOKRIG
+398-1-V,reuse_cal7,6127,Saulkrasti - Rīga,SAULKRIG
+203-1-V,reuse_cal6,6231,Aizkraukle - Rīga,AIZKRIG
+1-397-V,reuse_cal1,6513,Rīga - Tukums II,RIGTUKII
+1-349-V,reuse_cal6,6719,Rīga - Jelgava,RIGJEL
+1-398-V,reuse_cal7,6126,Rīga - Saulkrasti,RIGSAULK
+349-1-V,reuse_cal6,6724,Jelgava - Rīga,JELRIG
+1-203-V,reuse_cal4,6226,Rīga - Aizkraukle,RIGAIZK
+1-460-V,reuse_cal16,874,Rīga - Valga,RIGVALG
+1-394-V,reuse_cal1,6417,Rīga - Sloka,RIGSLOK
+1-311-V,train_cal704,704,Rīga - Ludza,
+394-1-V,reuse_cal1,6416,Sloka - Rīga,SLOKRIG
+399-1-V,reuse_cal7,6131,Skulte - Rīga,SKULRIG
+408-1-V,reuse_cal15,833,Sigulda - Rīga,SIGRIG
+1-408-V,reuse_cal16,836,Rīga - Sigulda,RIGSIG
+1-397-V,reuse_cal1,6515,Rīga - Tukums II,RIGTUKII
+286-1-V,reuse_cal1,6522,Ķemeri - Rīga,KEMRIG
+1-243-V,reuse_cal4,810,Rīga - Daugavpils,RIGDAUG
+1-349-V,reuse_cal6,6721,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6130,Rīga - Skulte,RIGSKUL
+349-1-V,reuse_cal6,6726,Jelgava - Rīga,JELRIG
+1-203-V,reuse_cal4,6228,Rīga - Aizkraukle,RIGAIZK
+298-1-V,reuse_cal6,6233,Lielvārde - Rīga,LIELVRIG
+1-394-V,reuse_cal1,6419,Rīga - Sloka,RIGSLOK
+446-1-V,reuse_cal4,803,Zilupe - Rīga,ZILRIG
+1-339-V,reuse_cal4,6230,Rīga - Ogre,RIGOGRE
+397-1-V,reuse_cal1,6524,Tukums II - Rīga,TUKIIRIG
+394-1-V,reuse_cal1,6418,Sloka - Rīga,SLOKRIG
+243-1-V,reuse_cal4,823-6243,Daugavpils - Rīga,DAUGRIG
+398-1-V,reuse_cal7,6135,Saulkrasti - Rīga,SAULKRIG
+1-397-V,reuse_cal1,6517,Rīga - Tukums II,RIGTUKII
+203-1-V,reuse_cal4,6235,Aizkraukle - Rīga,AIZKRIG
+1-349-V,reuse_cal6,6723,Rīga - Jelgava,RIGJEL
+1-398-V,reuse_cal7,6134,Rīga - Saulkrasti,RIGSAULK
+349-1-V,reuse_cal6,6728,Jelgava - Rīga,JELRIG
+1-203-V,reuse_cal4,6232,Rīga - Aizkraukle,RIGAIZK
+408-1-V,reuse_cal15,835,Sigulda - Rīga,SIGRIG
+1-394-V,reuse_cal1,6421,Rīga - Sloka,RIGSLOK
+394-1-V,reuse_cal1,6420,Sloka - Rīga,SLOKRIG
+397-1-V,reuse_cal1,6526,Tukums II - Rīga,TUKIIRIG
+1-298-V,reuse_cal4,6234,Rīga - Lielvārde,RIGLIELV
+1-230-V,reuse_cal27,6136,Rīga - Carnikava,RIGCARN
+399-1-V,reuse_cal7,6139,Skulte - Rīga,SKULRIG
+460-1-V,reuse_cal7,873,Valga - Rīga,VALGRIG
+1-397-V,reuse_cal1,6519,Rīga - Tukums II,RIGTUKII
+1-408-V,reuse_cal16,838,Rīga - Sigulda,RIGSIG
+203-1-V,reuse_cal4,6239,Aizkraukle - Rīga,AIZKRIG
+1-349-V,reuse_cal6,6725,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6138,Rīga - Skulte,RIGSKUL
+349-1-V,reuse_cal6,6730,Jelgava - Rīga,JELRIG
+1-243-V,reuse_cal4,6236-824,Rīga - Daugavpils,RIGDAUG
+339-1-V,reuse_cal4,6237,Ogre - Rīga,OGRERIG
+1-394-V,reuse_cal1,6423,Rīga - Sloka,RIGSLOK
+397-1-V,reuse_cal1,6528,Tukums II - Rīga,TUKIIRIG
+394-1-V,reuse_cal1,6422,Sloka - Rīga,SLOKRIG
+1-298-V,reuse_cal4,6238,Rīga - Lielvārde,RIGLIELV
+1-230-V,reuse_cal7,6140,Rīga - Carnikava,RIGCARN
+1-252-V,reuse_cal1,6333,Rīga - Dubulti,RIGDUB
+298-1-V,reuse_cal6,6241,Lielvārde - Rīga,LIELVRIG
+1-233-V,reuse_cal7,840,Rīga - Cēsis,RIGCES
+398-1-V,reuse_cal7,6143,Saulkrasti - Rīga,SAULKRIG
+1-397-V,reuse_cal1,6521,Rīga - Tukums II,RIGTUKII
+1-349-V,reuse_cal6,6729,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6142,Rīga - Skulte,RIGSKUL
+349-1-V,reuse_cal6,6732,Jelgava - Rīga,JELRIG
+1-203-V,reuse_cal4,6240,Rīga - Aizkraukle,RIGAIZK
+1-252-V,reuse_cal1,6335,Rīga - Dubulti,RIGDUB
+1-394-V,reuse_cal1,6425,Rīga - Sloka,RIGSLOK
+1-349-V,reuse_cal3,6879,Rīga - Jelgava,RIGJEL
+394-1-V,reuse_cal1,6424,Sloka - Rīga,SLOKRIG
+252-1-V,reuse_cal1,6334,Dubulti - Rīga,DUBRIG
+408-1-V,reuse_cal7,837,Sigulda - Rīga,SIGRIG
+1-298-V,reuse_cal4,6242,Rīga - Lielvārde,RIGLIELV
+397-1-V,reuse_cal1,6530,Tukums II - Rīga,TUKIIRIG
+1-230-V,reuse_cal7,6144,Rīga - Carnikava,RIGCARN
+230-1-V,reuse_cal7,6145,Carnikava - Rīga,CARNRIG
+1-252-V,reuse_cal1,6337,Rīga - Dubulti,RIGDUB
+399-1-V,reuse_cal7,6147,Skulte - Rīga,SKULRIG
+1-408-V,reuse_cal7,842,Rīga - Sigulda,RIGSIG
+298-1-V,reuse_cal6,6245,Lielvārde - Rīga,LIELVRIG
+243-1-V,reuse_cal4,809,Daugavpils - Rīga,DAUGRIG
+1-394-V,reuse_cal3,6427,Rīga - Sloka,RIGSLOK
+1-313-V,reuse_cal20,708,Rīga - Indra,RIGIND
+203-1-V,reuse_cal4,6247,Aizkraukle - Rīga,AIZKRIG
+1-349-V,reuse_cal6,6733,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6146,Rīga - Skulte,RIGSKUL
+252-1-V,reuse_cal1,6336,Dubulti - Rīga,DUBRIG
+1-203-V,reuse_cal4,6244,Rīga - Aizkraukle,RIGAIZK
+349-1-V,reuse_cal6,6736,Jelgava - Rīga,JELRIG
+1-397-V,reuse_cal3,6525,Rīga - Tukums II,RIGTUKII
+311-1-V,train_cal703,703,Ludza - Rīga,
+1-394-V,reuse_cal1,6429,Rīga - Sloka,RIGSLOK
+1-446-V,reuse_cal4,812,Rīga - Zilupe,RIGZIL
+1-349-V,reuse_cal28,6881,Rīga - Jelgava,RIGJEL
+349-1-V,reuse_cal28,6880,Jelgava - Rīga,JELRIG
+1-398-V,reuse_cal7,6148,Rīga - Saulkrasti,RIGSAULK
+252-1-V,reuse_cal1,6338,Dubulti - Rīga,DUBRIG
+1-298-V,reuse_cal4,6246,Rīga - Lielvārde,RIGLIELV
+394-1-V,reuse_cal1,6426,Sloka - Rīga,SLOKRIG
+397-1-V,reuse_cal1,6532,Tukums II - Rīga,TUKIIRIG
+230-1-V,reuse_cal7,6149,Carnikava - Rīga,CARNRIG
+1-252-V,reuse_cal1,6341,Rīga - Dubulti,RIGDUB
+399-1-V,reuse_cal7,6151,Skulte - Rīga,SKULRIG
+298-1-V,reuse_cal6,6249,Lielvārde - Rīga,LIELVRIG
+1-339-V,reuse_cal5,6248,Rīga - Ogre,RIGOGRE
+1-432-V,reuse_cal23,864,Rīga - Valmiera,RIGVALM
+1-394-V,reuse_cal3,6431,Rīga - Sloka,RIGSLOK
+203-1-V,reuse_cal4,6251,Aizkraukle - Rīga,AIZKRIG
+394-1-V,reuse_cal3,6428,Sloka - Rīga,SLOKRIG
+233-1-V,reuse_cal16,839,Cēsis - Rīga,CESRIG
+1-349-V,reuse_cal6,6737,Rīga - Jelgava,RIGJEL
+460-1-V,reuse_cal17,871,Valga - Rīga,VALGRIG
+1-399-V,reuse_cal7,6152,Rīga - Skulte,RIGSKUL
+1-203-V,reuse_cal4,6250,Rīga - Aizkraukle,RIGAIZK
+408-1-V,reuse_cal16,841,Sigulda - Rīga,SIGRIG
+349-1-V,reuse_cal6,6740,Jelgava - Rīga,JELRIG
+1-408-V,reuse_cal7,844,Rīga - Sigulda,RIGSIG
+1-397-V,reuse_cal3,6529,Rīga - Tukums II,RIGTUKII
+1-394-V,reuse_cal1,6433,Rīga - Sloka,RIGSLOK
+1-243-V,reuse_cal4,814,Rīga - Daugavpils,RIGDAUG
+1-349-V,reuse_cal3,6883,Rīga - Jelgava,RIGJEL
+349-1-V,reuse_cal3,6882,Jelgava - Rīga,JELRIG
+1-398-V,reuse_cal7,6154,Rīga - Saulkrasti,RIGSAULK
+394-1-V,reuse_cal1,6430,Sloka - Rīga,SLOKRIG
+252-1-V,reuse_cal1,6342,Dubulti - Rīga,DUBRIG
+1-298-V,reuse_cal4,6252,Rīga - Lielvārde,RIGLIELV
+243-1-V,reuse_cal4,825,Daugavpils - Rīga,DAUGRIG
+397-1-V,reuse_cal1,6534,Tukums II - Rīga,TUKIIRIG
+1-252-V,reuse_cal1,6345,Rīga - Dubulti,RIGDUB
+230-1-V,reuse_cal27,6153,Carnikava - Rīga,CARNRIG
+399-1-V,reuse_cal7,6155,Skulte - Rīga,SKULRIG
+1-300-V,reuse_cal29,723,Rīga - Liepāja,RIGLIEP
+298-1-V,reuse_cal6,6255,Lielvārde - Rīga,LIELVRIG
+1-394-V,reuse_cal3,6435,Rīga - Sloka,RIGSLOK
+1-460-V,reuse_cal7,876,Rīga - Valga,RIGVALG
+339-1-V,reuse_cal3,6253,Ogre - Rīga,OGRERIG
+394-1-V,reuse_cal3,6432,Sloka - Rīga,SLOKRIG
+203-1-V,reuse_cal4,6257,Aizkraukle - Rīga,AIZKRIG
+1-349-V,reuse_cal6,6741,Rīga - Jelgava,RIGJEL
+349-1-V,reuse_cal29,6744,Jelgava - Rīga,JELRIG
+1-399-V,reuse_cal7,6156,Rīga - Skulte,RIGSKUL
+1-203-V,reuse_cal4,6254,Rīga - Aizkraukle,RIGAIZK
+1-397-V,reuse_cal3,6533,Rīga - Tukums II,RIGTUKII
+398-1-V,reuse_cal7,6157,Saulkrasti - Rīga,SAULKRIG
+1-394-V,reuse_cal1,6437,Rīga - Sloka,RIGSLOK
+1-291-V,reuse_cal9,820,Rīga - Gulbene,RIGGULB
+349-1-V,reuse_cal3,6884,Jelgava - Rīga,JELRIG
+1-398-V,reuse_cal7,6158,Rīga - Saulkrasti,RIGSAULK
+252-1-V,reuse_cal1,6346,Dubulti - Rīga,DUBRIG
+394-1-V,reuse_cal1,6434,Sloka - Rīga,SLOKRIG
+397-1-V,reuse_cal1,6536,Tukums II - Rīga,TUKIIRIG
+1-298-V,reuse_cal4,6256,Rīga - Lielvārde,RIGLIELV
+1-252-V,reuse_cal1,6349,Rīga - Dubulti,RIGDUB
+399-1-V,reuse_cal7,6159,Skulte - Rīga,SKULRIG
+298-1-V,reuse_cal6,6259,Lielvārde - Rīga,LIELVRIG
+1-397-V,reuse_cal1,6535,Rīga - Tukums II,RIGTUKII
+1-432-V,reuse_cal16,866,Rīga - Valmiera,RIGVALM
+203-1-V,reuse_cal4,6261,Aizkraukle - Rīga,AIZKRIG
+394-1-V,reuse_cal3,6436,Sloka - Rīga,SLOKRIG
+1-349-V,reuse_cal6,6745,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6160,Rīga - Skulte,RIGSKUL
+1-298-V,reuse_cal4,6258,Rīga - Lielvārde,RIGLIELV
+349-1-V,reuse_cal6,6748,Jelgava - Rīga,JELRIG
+398-1-V,reuse_cal7,6161,Saulkrasti - Rīga,SAULKRIG
+1-394-V,reuse_cal1,6439,Rīga - Sloka,RIGSLOK
+1-398-V,reuse_cal7,6162,Rīga - Saulkrasti,RIGSAULK
+408-1-V,reuse_cal23,843,Sigulda - Rīga,SIGRIG
+1-203-V,reuse_cal4,6260,Rīga - Aizkraukle,RIGAIZK
+397-1-V,reuse_cal1,6538,Tukums II - Rīga,TUKIIRIG
+252-1-V,reuse_cal1,6350,Dubulti - Rīga,DUBRIG
+394-1-V,reuse_cal1,6438,Sloka - Rīga,SLOKRIG
+399-1-V,reuse_cal7,6163,Skulte - Rīga,SKULRIG
+298-1-V,reuse_cal6,6263,Lielvārde - Rīga,LIELVRIG
+1-408-V,reuse_cal13,846,Rīga - Sigulda,RIGSIG
+1-397-V,reuse_cal1,6537,Rīga - Tukums II,RIGTUKII
+203-1-V,reuse_cal4,6265,Aizkraukle - Rīga,AIZKRIG
+1-349-V,reuse_cal6,6747,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6164,Rīga - Skulte,RIGSKUL
+349-1-V,reuse_cal6,6750,Jelgava - Rīga,JELRIG
+1-298-V,reuse_cal4,6262,Rīga - Lielvārde,RIGLIELV
+398-1-V,reuse_cal7,6165,Saulkrasti - Rīga,SAULKRIG
+1-394-V,reuse_cal1,6441,Rīga - Sloka,RIGSLOK
+1-243-V,reuse_cal4,822,Rīga - Daugavpils,RIGDAUG
+397-1-V,reuse_cal1,6540,Tukums II - Rīga,TUKIIRIG
+394-1-V,reuse_cal1,6440,Sloka - Rīga,SLOKRIG
+1-298-V,reuse_cal6,6264,Rīga - Lielvārde,RIGLIELV
+399-1-V,reuse_cal7,6167,Skulte - Rīga,SKULRIG
+298-1-V,reuse_cal6,6267,Lielvārde - Rīga,LIELVRIG
+1-397-V,reuse_cal1,6539,Rīga - Tukums II,RIGTUKII
+1-233-V,reuse_cal16,848,Rīga - Cēsis,RIGCES
+1-349-V,reuse_cal6,6749,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6166,Rīga - Skulte,RIGSKUL
+349-1-V,reuse_cal6,6752,Jelgava - Rīga,JELRIG
+1-203-V,reuse_cal4,6266,Rīga - Aizkraukle,RIGAIZK
+408-1-V,reuse_cal16,845,Sigulda - Rīga,SIGRIG
+1-286-V,reuse_cal1,6541,Rīga - Ķemeri,RIGKEM
+203-1-V,reuse_cal4,6269,Aizkraukle - Rīga,AIZKRIG
+394-1-V,reuse_cal1,6442,Sloka - Rīga,SLOKRIG
+397-1-V,reuse_cal1,6542,Tukums II - Rīga,TUKIIRIG
+399-1-V,reuse_cal7,6169,Skulte - Rīga,SKULRIG
+1-397-V,reuse_cal1,6543,Rīga - Tukums II,RIGTUKII
+1-408-V,reuse_cal16,850,Rīga - Sigulda,RIGSIG
+1-349-V,reuse_cal6,6751,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6168,Rīga - Skulte,RIGSKUL
+1-203-V,reuse_cal4,6268,Rīga - Aizkraukle,RIGAIZK
+349-1-V,reuse_cal6,6754,Jelgava - Rīga,JELRIG
+1-396-V,reuse_cal31,6545,Rīga - Tukums I,RIGTUKI
+1-349-V,reuse_cal1,6753,Rīga - Jelgava,RIGJEL
+1-399-V,reuse_cal7,6170,Rīga - Skulte,RIGSKUL
+1-298-V,reuse_cal6,6270,Rīga - Lielvārde,RIGLIELV
+1-397-V,reuse_cal1,6547,Rīga - Tukums II,RIGTUKII
+291-1-V,reuse_cal10,819,Gulbene - Rīga,GULBRIG
+1-291-V,reuse_cal11,806,Rīga - Gulbene,RIGGULB
+1-252-V,reuse_cal30,6317,Rīga - Dubulti,RIGDUB
+252-1-V,reuse_cal30,6318,Dubulti - Rīga,DUBRIG
+1-252-V,reuse_cal30,6321,Rīga - Dubulti,RIGDUB
+252-1-V,reuse_cal30,6322,Dubulti - Rīga,DUBRIG
+1-252-V,reuse_cal30,6325,Rīga - Dubulti,RIGDUB
+252-1-V,reuse_cal30,6326,Dubulti - Rīga,DUBRIG
+1-252-V,reuse_cal30,6329,Rīga - Dubulti,RIGDUB
+252-1-V,reuse_cal30,6330,Dubulti - Rīga,DUBRIG
+1-397-V,reuse_cal2,6523,Rīga - Tukums II,RIGTUKII
+1-269-V,reuse_cal18,706,Rīga - Krāslava,
+1-252-V,reuse_cal2,6339,Rīga - Dubulti,RIGDUB
+1-397-V,reuse_cal2,6527,Rīga - Tukums II,RIGTUKII
+252-1-V,reuse_cal2,6340,Dubulti - Rīga,DUBRIG
+1-252-V,reuse_cal2,6343,Rīga - Dubulti,RIGDUB
+1-397-V,reuse_cal2,6531,Rīga - Tukums II,RIGTUKII
+252-1-V,reuse_cal2,6344,Dubulti - Rīga,DUBRIG
+1-252-V,reuse_cal2,6347,Rīga - Dubulti,RIGDUB
+291-1-V,reuse_cal10,807,Gulbene - Rīga,GULBRIG
+1-315-V,reuse_cal8,816,Rīga - Madona,RIGMAD
+252-1-V,reuse_cal2,6348,Dubulti - Rīga,DUBRIG
+269-1-V,reuse_cal21,705,Krāslava - Rīga,
+315-1-V,reuse_cal12,817,Madona - Rīga,MADRIG
+1-300-V,reuse_cal14,721,Rīga - Liepāja,RIGLIEP
+291-1-V,reuse_cal12,805,Gulbene - Rīga,GULBRIG
+300-1-V,reuse_cal14,722,Liepāja - Rīga,LIEPRIG
+1-432-V,reuse_cal22,868,Rīga - Valmiera,RIGVALM
+1-408-V,reuse_cal24,832,Rīga - Sigulda,RIGSIG
