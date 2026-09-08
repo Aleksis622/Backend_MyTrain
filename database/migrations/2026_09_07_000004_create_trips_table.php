@@ -11,7 +11,9 @@ return new class extends Migration {
             $table->string('route_id');
             $table->string('service_id');
             $table->string('trip_headsign')->nullable();
+            $table->string('block_id')->nullable();
             $table->string('shape_id')->nullable();
+            
 
             $table->foreign('route_id')->references('route_id')->on('routes')->cascadeOnDelete();
         });

@@ -40,4 +40,20 @@ class AuthController extends Controller
 
         return response()->json(['user' => $user], 200);
     }
+    public function changeLanguage(Request $request)
+{
+    $request->validate([
+        'language' => 'required|in:lv,en,ru'
+    ]);
+
+    $user = $request->user();
+    $user->language = $request->language;
+    $user->save();
+
+    return response()->json([
+        'message' => __('language_changed'),
+        'language' => $user->language
+    ]);
+}
+
 }

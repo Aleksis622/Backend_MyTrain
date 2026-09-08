@@ -12,15 +12,20 @@ class AgencySeeder extends Seeder
     {
         DB::table('agencies')->delete();
 
-        Agency::create([
-            'agency_id' => 'vivi',
-            'agency_name' => 'Vivi',
-            'agency_url' => 'https://www.vivi.lv',
-            'agency_timezone' => 'Europe/Riga',
-            'agency_lang' => 'lv',
-            'agency_phone' => '80007600',
-            'agency_fare_url' => null,
-            'agency_email' => 'vilciens@info.vivi.lv',
-        ]);
+        $rows = array_map('str_getcsv', file(database_path('seed_data/agency.txt')));
+        array_shift($rows);
+
+        foreach ($rows as $row) {
+            Agency::create([
+                'agency_id' => $row[0],
+                'agency_name' => $row[1],
+                'agency_url' => $row[2] ?: null,
+                'agency_timezone' => $row[3],
+                'agency_lang' => $row[4] ?: null,
+                'agency_phone' => $row[5] ?: null,
+                'agency_fare_url' => $row[6] ?: null,
+                'agency_email' => $row[7] ?: null,
+            ]);
+        }
     }
 }

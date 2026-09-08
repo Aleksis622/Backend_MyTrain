@@ -11,8 +11,6 @@ return new class extends Migration {
             $table->string('service_id');
             $table->date('date');
             $table->integer('exception_type');
-
-            $table->foreign('service_id')->references('service_id')->on('calendar')->cascadeOnDelete();
         });
     }
 

@@ -12,7 +12,6 @@ class FareRulesSeeder extends Seeder
     {
         DB::table('fare_rules')->delete();
 
-
         $rows = array_map('str_getcsv', file(database_path('seed_data/fare_rules.txt')));
         array_shift($rows);
 
@@ -27,3 +26,4 @@ class FareRulesSeeder extends Seeder
         }
     }
 }
+

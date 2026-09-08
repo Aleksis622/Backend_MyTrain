@@ -13,8 +13,10 @@ return new class extends Migration {
             $table->time('departure_time');
             $table->string('stop_id');
             $table->integer('stop_sequence');
+             $table->string('stop_headsign')->nullable();   
             $table->integer('pickup_type')->nullable();
             $table->integer('drop_off_type')->nullable();
+            $table->string('shape_dist_traveled')->nullable();
 
             $table->foreign('trip_id')->references('trip_id')->on('trips')->cascadeOnDelete();
             $table->foreign('stop_id')->references('stop_id')->on('stops')->cascadeOnDelete();
