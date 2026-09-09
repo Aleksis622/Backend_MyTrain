@@ -17,7 +17,7 @@ use App\Http\Controllers\AuthController;
 
 Route::middleware('lang')->group(function () {
 
-   
+    
     Route::get('/agency', [AgencyController::class, 'index']);
     Route::get('/agency/{agency_id}', [AgencyController::class, 'show']);
 
@@ -31,12 +31,7 @@ Route::middleware('lang')->group(function () {
     Route::get('/stops/{stop_id}', [StopController::class, 'show']);
     Route::get('/stops/{stop_id}/times', [StopController::class, 'stopTimes']);
 
-    
-    Route::get('/trips', [TripController::class, 'index']);
-    Route::get('/trips/{trip_id}', [TripController::class, 'show']);
-    Route::get('/trips/{trip_id}/times', [TripController::class, 'stopTimes']);
-
-    
+   
     Route::get('/stop_times', [StopTimeController::class, 'index']);
     Route::get('/stop_times/{id}', [StopTimeController::class, 'show']);
 
@@ -48,13 +43,18 @@ Route::middleware('lang')->group(function () {
     Route::get('/calendar_dates', [CalendarDateController::class, 'index']);
     Route::get('/calendar_dates/{service_id}', [CalendarDateController::class, 'show']);
 
-   
+    
     Route::get('/fare_attributes', [FareAttributeController::class, 'index']);
     Route::get('/fare_attributes/{fare_id}', [FareAttributeController::class, 'show']);
 
     Route::get('/fare_rules', [FareRuleController::class, 'index']);
     Route::get('/fare_rules/{fare_id}', [FareRuleController::class, 'show']);
 
-    
+
     Route::middleware('auth:sanctum')->post('/user/language', [AuthController::class, 'changeLanguage']);
 });
+
+
+Route::get('/trips', [TripController::class, 'index']);
+Route::get('/trips/{trip_id}', [TripController::class, 'show']);
+Route::get('/trips/{trip_id}/times', [TripController::class, 'stopTimes']);
