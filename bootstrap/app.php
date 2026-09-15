@@ -8,8 +8,15 @@ use Illuminate\Http\Middleware\HandleCors;
 return Application::configure(basePath: dirname(__DIR__))
 
     ->withMiddleware(function (Middleware $middleware) {
+
+        
         $middleware->use([
             HandleCors::class,
+        ]);
+
+        
+        $middleware->alias([
+            'lang' => \App\Http\Middleware\SetUserLanguage::class,
         ]);
     })
 

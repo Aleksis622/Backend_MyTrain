@@ -8,12 +8,14 @@ class StopController extends Controller
 {
     public function index()
     {
-        return Stop::all();
+        return Stop::paginate(100);
     }
 
     public function show($stop_id)
     {
-        $stop = Stop::where('stop_id', $stop_id)->first();
+        $stop = Stop::with(['originJourneys.train', 'destinationJourneys.train'])
+            ->where('stop_id', $stop_id)
+            ->first();
 
         if (!$stop) {
             return response()->json(['error' => 'Stop not found'], 404);
@@ -24,7 +26,10 @@ class StopController extends Controller
 
     public function stopTimes($stop_id)
     {
-        $times = \App\Models\StopTime::where('stop_id', $stop_id)->get();
+        $times = \App\Models\StopTime::with(['trip.route'])
+            ->where('stop_id', $stop_id)
+            ->orderBy('stop_sequence')
+            ->get();
 
         if ($times->isEmpty()) {
             return response()->json(['error' => 'No stop times found for this stop'], 404);

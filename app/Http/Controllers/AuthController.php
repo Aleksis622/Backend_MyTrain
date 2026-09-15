@@ -8,52 +8,83 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+   
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6'
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+            'language' => 'nullable|in:lv,en,ru'
         ]);
 
         $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password'])
+            'name'     => $data['name'],
+            'email'    => $data['email'],
+            'password' => Hash::make($data['password']),
+            'language' => $data['language'] ?? 'lv',
         ]);
 
-        return response()->json(['user' => $user], 201);
+        // Create API token
+        $token = $user->createToken('api')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Registration successful',
+            'user'    => $user,
+            'token'   => $token,
+        ], 201);
     }
 
+    
     public function login(Request $request)
     {
         $data = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
+            'email'    => 'required|email',
+            'password' => 'required|string',
         ]);
 
         $user = User::where('email', $data['email'])->first();
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
-            return response()->json(['error' => 'Invalid credentials'], 401);
+            return response()->json([
+                'error' => 'Invalid credentials'
+            ], 401);
         }
 
-        return response()->json(['user' => $user], 200);
+        
+        $token = $user->createToken('api')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login successful',
+            'user'    => $user,
+            'token'   => $token,
+        ]);
     }
+
+   
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Logged out successfully'
+        ]);
+    }
+
+    
     public function changeLanguage(Request $request)
-{
-    $request->validate([
-        'language' => 'required|in:lv,en,ru'
-    ]);
+    {
+        $request->validate([
+            'language' => 'required|in:lv,en,ru'
+        ]);
 
-    $user = $request->user();
-    $user->language = $request->language;
-    $user->save();
+        $user = $request->user();
+        $user->language = $request->language;
+        $user->save();
 
-    return response()->json([
-        'message' => __('language_changed'),
-        'language' => $user->language
-    ]);
-}
-
+        return response()->json([
+            'message'  => __('language_changed'),
+            'language' => $user->language
+        ]);
+    }
 }

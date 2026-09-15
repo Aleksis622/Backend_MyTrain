@@ -8,9 +8,15 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('calendar_dates', function (Blueprint $table) {
             $table->id();
+
             $table->string('service_id');
+            $table->foreign('service_id')
+                ->references('service_id')
+                ->on('calendar')
+                ->cascadeOnDelete();
+
             $table->date('date');
-            $table->integer('exception_type');
+            $table->integer('exception_type'); 
         });
     }
 

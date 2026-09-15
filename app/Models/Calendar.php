@@ -3,10 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Calendar extends Model
 {
+    use HasFactory;
+
     protected $table = 'calendar';
+
+    protected $primaryKey = 'service_id';
+    public $incrementing = false;
 
     protected $fillable = [
         'service_id',
@@ -26,5 +32,10 @@ class Calendar extends Model
     public function trips()
     {
         return $this->hasMany(Trip::class, 'service_id', 'service_id');
+    }
+
+    public function calendarDates()
+    {
+        return $this->hasMany(CalendarDate::class, 'service_id', 'service_id');
     }
 }

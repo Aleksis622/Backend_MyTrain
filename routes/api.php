@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\StopController;
@@ -10,9 +10,10 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\CalendarDateController;
 use App\Http\Controllers\FareAttributeController;
 use App\Http\Controllers\FareRuleController;
-use App\Http\Controllers\ShapeController;
-use App\Http\Controllers\AgencyController;
+use App\Http\Controllers\TrainController;
+use App\Http\Controllers\MapController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PaymentController;
 
 
 Route::middleware('lang')->group(function () {
@@ -21,7 +22,7 @@ Route::middleware('lang')->group(function () {
     Route::get('/agency', [AgencyController::class, 'index']);
     Route::get('/agency/{agency_id}', [AgencyController::class, 'show']);
 
-    
+   
     Route::get('/routes', [RouteController::class, 'index']);
     Route::get('/routes/{route_id}', [RouteController::class, 'show']);
     Route::get('/routes/{route_id}/trips', [RouteController::class, 'trips']);
@@ -31,7 +32,7 @@ Route::middleware('lang')->group(function () {
     Route::get('/stops/{stop_id}', [StopController::class, 'show']);
     Route::get('/stops/{stop_id}/times', [StopController::class, 'stopTimes']);
 
-   
+    
     Route::get('/stop_times', [StopTimeController::class, 'index']);
     Route::get('/stop_times/{id}', [StopTimeController::class, 'show']);
 
@@ -39,7 +40,7 @@ Route::middleware('lang')->group(function () {
     Route::get('/calendar', [CalendarController::class, 'index']);
     Route::get('/calendar/{service_id}', [CalendarController::class, 'show']);
 
-    
+   
     Route::get('/calendar_dates', [CalendarDateController::class, 'index']);
     Route::get('/calendar_dates/{service_id}', [CalendarDateController::class, 'show']);
 
@@ -47,10 +48,35 @@ Route::middleware('lang')->group(function () {
     Route::get('/fare_attributes', [FareAttributeController::class, 'index']);
     Route::get('/fare_attributes/{fare_id}', [FareAttributeController::class, 'show']);
 
+    
     Route::get('/fare_rules', [FareRuleController::class, 'index']);
     Route::get('/fare_rules/{fare_id}', [FareRuleController::class, 'show']);
 
+    
+    Route::get('/search-trains', [TrainController::class, 'search']);
 
+   
+    Route::get('/popular-routes', function () {
+        return [
+            [
+                'id' => 1,
+                'name' => 'Rīga → Jelgava',
+                'description' => 'Fast trains every 30 minutes'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Rīga → Sigulda',
+                'description' => 'Popular scenic route'
+            ],
+            [
+                'id' => 3,
+                'name' => 'Rīga → Daugavpils',
+                'description' => 'Long-distance express'
+            ],
+        ];
+    });
+
+    
     Route::middleware('auth:sanctum')->post('/user/language', [AuthController::class, 'changeLanguage']);
 });
 
@@ -58,3 +84,17 @@ Route::middleware('lang')->group(function () {
 Route::get('/trips', [TripController::class, 'index']);
 Route::get('/trips/{trip_id}', [TripController::class, 'show']);
 Route::get('/trips/{trip_id}/times', [TripController::class, 'stopTimes']);
+
+
+Route::get('/map/trains', [MapController::class, 'trains']);
+Route::get('/map/trains/{trainId}/history', [MapController::class, 'history']);
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/payments', [PaymentController::class, 'index']);
+    Route::get('/payments/{id}', [PaymentController::class, 'show']);
+    Route::post('/payments', [PaymentController::class, 'store']);
+    Route::post('/payments/{id}/confirm', [PaymentController::class, 'confirm']);
+    Route::post('/payments/{id}/refund', [PaymentController::class, 'refund']);
+});

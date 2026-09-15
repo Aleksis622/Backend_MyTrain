@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CalendarDate extends Model
 {
+    use HasFactory;
+
     protected $table = 'calendar_dates';
 
     protected $fillable = [
@@ -16,8 +19,8 @@ class CalendarDate extends Model
 
     public $timestamps = false;
 
-    public function trip()
+    public function calendar()
     {
-        return $this->belongsTo(Trip::class, 'service_id', 'service_id');
+        return $this->belongsTo(Calendar::class, 'service_id', 'service_id');
     }
 }

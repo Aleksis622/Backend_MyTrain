@@ -8,12 +8,15 @@ class TripController extends Controller
 {
     public function index()
     {
-        return Trip::all();
+        return Trip::with(['route', 'calendar', 'calendarDates'])
+            ->paginate(50);
     }
 
     public function show($trip_id)
     {
-        $trip = Trip::where('trip_id', $trip_id)->first();
+        $trip = Trip::with(['route', 'stopTimes.stop', 'calendar', 'calendarDates'])
+            ->where('trip_id', $trip_id)
+            ->first();
 
         if (!$trip) {
             return response()->json(['error' => 'Trip not found'], 404);
@@ -24,7 +27,10 @@ class TripController extends Controller
 
     public function stopTimes($trip_id)
     {
-        $times = \App\Models\StopTime::where('trip_id', $trip_id)->get();
+        $times = \App\Models\StopTime::with('stop')
+            ->where('trip_id', $trip_id)
+            ->orderBy('stop_sequence')
+            ->get();
 
         if ($times->isEmpty()) {
             return response()->json(['error' => 'No stop times found for this trip'], 404);

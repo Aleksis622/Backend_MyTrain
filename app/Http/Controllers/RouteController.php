@@ -8,12 +8,15 @@ class RouteController extends Controller
 {
     public function index()
     {
-        return Route::all();
+        return Route::with('agency')
+            ->paginate(50);
     }
 
     public function show($route_id)
     {
-        $route = Route::where('route_id', $route_id)->first();
+        $route = Route::with(['agency', 'trips'])
+            ->where('route_id', $route_id)
+            ->first();
 
         if (!$route) {
             return response()->json(['error' => 'Route not found'], 404);
@@ -24,7 +27,9 @@ class RouteController extends Controller
 
     public function trips($route_id)
     {
-        $trips = \App\Models\Trip::where('route_id', $route_id)->get();
+        $trips = \App\Models\Trip::with(['stopTimes.stop', 'calendar'])
+            ->where('route_id', $route_id)
+            ->get();
 
         if ($trips->isEmpty()) {
             return response()->json(['error' => 'No trips found for this route'], 404);
@@ -33,3 +38,4 @@ class RouteController extends Controller
         return $trips;
     }
 }
+
