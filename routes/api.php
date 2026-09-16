@@ -14,10 +14,12 @@ use App\Http\Controllers\TrainController;
 use App\Http\Controllers\MapController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\TrainPositionController;
 
 
 Route::middleware('lang')->group(function () {
 
+    Route::post('/train-positions', [TrainPositionController::class, 'store']);
     
     Route::get('/agency', [AgencyController::class, 'index']);
     Route::get('/agency/{agency_id}', [AgencyController::class, 'show']);
