@@ -28,6 +28,7 @@ Route::middleware('lang')->group(function () {
     Route::get('/routes', [RouteController::class, 'index']);
     Route::get('/routes/{route_id}', [RouteController::class, 'show']);
     Route::get('/routes/{route_id}/trips', [RouteController::class, 'trips']);
+    Route::get('/map/train-route/{trip_id}', [MapController::class, 'route']);
 
     
     Route::get('/stops', [StopController::class, 'index']);

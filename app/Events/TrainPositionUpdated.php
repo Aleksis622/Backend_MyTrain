@@ -4,10 +4,10 @@ namespace App\Events;
 
 use App\Models\TrainPosition;
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Queue\SerializesModels;
 
-class TrainPositionUpdated implements ShouldBroadcast
+class TrainPositionUpdated implements ShouldBroadcastNow
 {
     use SerializesModels;
 

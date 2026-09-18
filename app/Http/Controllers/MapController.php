@@ -41,4 +41,19 @@ class MapController extends Controller
 
         return $history;
     }
+    public function route($tripId)
+{
+    $stops = \App\Models\StopTime::where('trip_id', $tripId)
+        ->orderBy('stop_sequence')
+        ->with('stop')
+        ->get();
+
+    $coords = $stops->map(fn($s) => [
+        $s->stop->stop_lon,
+        $s->stop->stop_lat
+    ]);
+
+    return response()->json($coords);
+}
+
 }
