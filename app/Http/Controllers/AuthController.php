@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-   
+    
     public function register(Request $request)
     {
         $data = $request->validate([
@@ -25,13 +26,12 @@ class AuthController extends Controller
             'language' => $data['language'] ?? 'lv',
         ]);
 
-        // Create API token
-        $token = $user->createToken('api')->plainTextToken;
+        // Auto-login after registration
+        Auth::login($user);
 
         return response()->json([
             'message' => 'Registration successful',
             'user'    => $user,
-            'token'   => $token,
         ], 201);
     }
 
@@ -43,35 +43,30 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $data['email'])->first();
-
-        if (!$user || !Hash::check($data['password'], $user->password)) {
+        if (!Auth::attempt($data)) {
             return response()->json([
                 'error' => 'Invalid credentials'
             ], 401);
         }
 
-        
-        $token = $user->createToken('api')->plainTextToken;
+        $user = Auth::user();
 
         return response()->json([
             'message' => 'Login successful',
             'user'    => $user,
-            'token'   => $token,
         ]);
     }
 
-   
+    
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        Auth::guard('web')->logout();
 
         return response()->json([
             'message' => 'Logged out successfully'
         ]);
     }
 
-    
     public function changeLanguage(Request $request)
     {
         $request->validate([

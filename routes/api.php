@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\TripController;
@@ -15,50 +17,55 @@ use App\Http\Controllers\MapController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TrainPositionController;
+use App\Http\Controllers\PasswordResetController;
+
+
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout']);
+
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
 
 
 Route::middleware('lang')->group(function () {
 
     Route::post('/train-positions', [TrainPositionController::class, 'store']);
-    
+
     Route::get('/agency', [AgencyController::class, 'index']);
     Route::get('/agency/{agency_id}', [AgencyController::class, 'show']);
 
-   
     Route::get('/routes', [RouteController::class, 'index']);
     Route::get('/routes/{route_id}', [RouteController::class, 'show']);
     Route::get('/routes/{route_id}/trips', [RouteController::class, 'trips']);
     Route::get('/map/train-route/{trip_id}', [MapController::class, 'route']);
 
-    
     Route::get('/stops', [StopController::class, 'index']);
     Route::get('/stops/{stop_id}', [StopController::class, 'show']);
     Route::get('/stops/{stop_id}/times', [StopController::class, 'stopTimes']);
 
-    
     Route::get('/stop_times', [StopTimeController::class, 'index']);
     Route::get('/stop_times/{id}', [StopTimeController::class, 'show']);
 
-    
     Route::get('/calendar', [CalendarController::class, 'index']);
     Route::get('/calendar/{service_id}', [CalendarController::class, 'show']);
 
-   
     Route::get('/calendar_dates', [CalendarDateController::class, 'index']);
     Route::get('/calendar_dates/{service_id}', [CalendarDateController::class, 'show']);
 
-    
     Route::get('/fare_attributes', [FareAttributeController::class, 'index']);
     Route::get('/fare_attributes/{fare_id}', [FareAttributeController::class, 'show']);
 
-    
     Route::get('/fare_rules', [FareRuleController::class, 'index']);
     Route::get('/fare_rules/{fare_id}', [FareRuleController::class, 'show']);
 
-    
     Route::get('/search-trains', [TrainController::class, 'search']);
 
-   
     Route::get('/popular-routes', function () {
         return [
             [
@@ -79,7 +86,6 @@ Route::middleware('lang')->group(function () {
         ];
     });
 
-    
     Route::middleware('auth:sanctum')->post('/user/language', [AuthController::class, 'changeLanguage']);
 });
 
@@ -88,10 +94,8 @@ Route::get('/trips', [TripController::class, 'index']);
 Route::get('/trips/{trip_id}', [TripController::class, 'show']);
 Route::get('/trips/{trip_id}/times', [TripController::class, 'stopTimes']);
 
-
 Route::get('/map/trains', [MapController::class, 'trains']);
 Route::get('/map/trains/{trainId}/history', [MapController::class, 'history']);
-
 
 
 Route::middleware('auth:sanctum')->group(function () {
