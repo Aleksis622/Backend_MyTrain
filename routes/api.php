@@ -18,6 +18,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TrainPositionController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\EmailVerificationController;
 
 
 
@@ -25,12 +26,23 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
+
+
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+
+// EMAIL VERIFICATION (SIGNED URL)
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+    ->middleware('signed')
+    ->name('verification.verify');
+
+
+
+Route::get('/user', function (Request $request) {
     return $request->user();
 });
+
 
 
 Route::middleware('lang')->group(function () {
@@ -90,6 +102,7 @@ Route::middleware('lang')->group(function () {
 });
 
 
+// TRIPS + MAP
 Route::get('/trips', [TripController::class, 'index']);
 Route::get('/trips/{trip_id}', [TripController::class, 'show']);
 Route::get('/trips/{trip_id}/times', [TripController::class, 'stopTimes']);
@@ -98,6 +111,7 @@ Route::get('/map/trains', [MapController::class, 'trains']);
 Route::get('/map/trains/{trainId}/history', [MapController::class, 'history']);
 
 
+// PAYMENTS
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/payments', [PaymentController::class, 'index']);
     Route::get('/payments/{id}', [PaymentController::class, 'show']);

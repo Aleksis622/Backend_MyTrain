@@ -10,9 +10,13 @@ class SetUserLanguage
     public function handle($request, Closure $next)
     {
         
-        $lang = $request->header('X-Language')
-            ?? $request->get('lang')
-            ?? ($request->user()->language ?? 'lv');
+        $user = $request->user();
+
+        
+        $lang =
+            $request->header('X-Language') ??
+            $request->get('lang') ??
+            ($user ? $user->language : 'lv');
 
         App::setLocale($lang);
 

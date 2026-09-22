@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    
     public function register(Request $request)
     {
         $data = $request->validate([
@@ -26,7 +25,6 @@ class AuthController extends Controller
             'language' => $data['language'] ?? 'lv',
         ]);
 
-        // Auto-login after registration
         Auth::login($user);
 
         return response()->json([
@@ -35,7 +33,6 @@ class AuthController extends Controller
         ], 201);
     }
 
-    
     public function login(Request $request)
     {
         $data = $request->validate([
@@ -44,27 +41,20 @@ class AuthController extends Controller
         ]);
 
         if (!Auth::attempt($data)) {
-            return response()->json([
-                'error' => 'Invalid credentials'
-            ], 401);
+            return response()->json(['error' => 'Invalid credentials'], 401);
         }
-
-        $user = Auth::user();
 
         return response()->json([
             'message' => 'Login successful',
-            'user'    => $user,
+            'user'    => Auth::user(),
         ]);
     }
 
-    
-    public function logout(Request $request)
+    public function logout()
     {
-        Auth::guard('web')->logout();
+        Auth::logout();
 
-        return response()->json([
-            'message' => 'Logged out successfully'
-        ]);
+        return response()->json(['message' => 'Logged out successfully']);
     }
 
     public function changeLanguage(Request $request)
@@ -83,3 +73,4 @@ class AuthController extends Controller
         ]);
     }
 }
+

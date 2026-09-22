@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 
 class PasswordResetController extends Controller
 {
@@ -15,11 +14,9 @@ class PasswordResetController extends Controller
 
         $status = Password::sendResetLink($request->only('email'));
 
-        if ($status === Password::RESET_LINK_SENT) {
-            return response()->json(['message' => 'Reset link sent']);
-        }
-
-        return response()->json(['error' => 'Unable to send reset link'], 400);
+        return $status === Password::RESET_LINK_SENT
+            ? response()->json(['message' => 'Reset link sent'])
+            : response()->json(['error' => 'Unable to send reset link'], 400);
     }
 
     public function resetPassword(Request $request)
@@ -27,24 +24,20 @@ class PasswordResetController extends Controller
         $request->validate([
             'token'    => 'required',
             'email'    => 'required|email',
-            'password' => 'required|min:6|confirmed',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) use ($request) {
+            function ($user, $password) {
                 $user->forceFill([
-                    'password' => Hash::make($request->password)
+                    'password' => Hash::make($password),
                 ])->save();
-
-                Auth::login($user);
             }
         );
 
-        if ($status === Password::PASSWORD_RESET) {
-            return response()->json(['message' => 'Password reset successful']);
-        }
-
-        return response()->json(['error' => 'Invalid token'], 400);
+        return $status === Password::PASSWORD_RESET
+            ? response()->json(['message' => 'Password reset successful'])
+            : response()->json(['error' => 'Password reset failed'], 400);
     }
 }

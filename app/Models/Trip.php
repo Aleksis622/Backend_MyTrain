@@ -6,26 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Trip extends Model
 {
-    protected $table = 'trips';
+    protected $primaryKey = 'trip_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
+        'trip_id',
         'route_id',
         'service_id',
-        'trip_id',
         'trip_headsign',
-        'shape_id',
+        'direction_id',
     ];
-
-    public $timestamps = false;
 
     public function route()
     {
         return $this->belongsTo(Route::class, 'route_id', 'route_id');
-    }
-
-    public function stopTimes()
-    {
-        return $this->hasMany(StopTime::class, 'trip_id', 'trip_id');
     }
 
     public function calendar()
@@ -36,5 +31,10 @@ class Trip extends Model
     public function calendarDates()
     {
         return $this->hasMany(CalendarDate::class, 'service_id', 'service_id');
+    }
+
+    public function stopTimes()
+    {
+        return $this->hasMany(StopTime::class, 'trip_id', 'trip_id');
     }
 }
