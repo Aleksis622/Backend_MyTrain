@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Trip extends Model
 {
+    public $timestamps = false;
     protected $primaryKey = 'trip_id';
     public $incrementing = false;
     protected $keyType = 'string';

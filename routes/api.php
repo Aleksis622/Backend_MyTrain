@@ -19,30 +19,33 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TrainPositionController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\TicketController;
 
 
+Route::middleware('web')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+});
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout']);
 
+Route::middleware(['auth:sanctum', 'web'])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/user/language', [AuthController::class, 'changeLanguage']);
+});
 
 
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 
 
-// EMAIL VERIFICATION (SIGNED URL)
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
     ->middleware('signed')
     ->name('verification.verify');
 
 
-
 Route::get('/user', function (Request $request) {
     return $request->user();
 });
-
 
 
 Route::middleware('lang')->group(function () {
@@ -97,12 +100,9 @@ Route::middleware('lang')->group(function () {
             ],
         ];
     });
-
-    Route::middleware('auth:sanctum')->post('/user/language', [AuthController::class, 'changeLanguage']);
 });
 
 
-// TRIPS + MAP
 Route::get('/trips', [TripController::class, 'index']);
 Route::get('/trips/{trip_id}', [TripController::class, 'show']);
 Route::get('/trips/{trip_id}/times', [TripController::class, 'stopTimes']);
@@ -111,7 +111,12 @@ Route::get('/map/trains', [MapController::class, 'trains']);
 Route::get('/map/trains/{trainId}/history', [MapController::class, 'history']);
 
 
-// PAYMENTS
+Route::get('/tickets', [TicketController::class, 'index']);
+Route::post('/tickets', [TicketController::class, 'store']);
+Route::post('/tickets/{ticket}/cancel', [TicketController::class, 'cancel']);
+Route::post('/tickets/{ticket}/mark-paid', [TicketController::class, 'markPaid']);
+
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/payments', [PaymentController::class, 'index']);
     Route::get('/payments/{id}', [PaymentController::class, 'show']);
