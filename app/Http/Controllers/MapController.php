@@ -4,16 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\StopTime;
 use App\Models\TrainPosition;
+use App\Services\TimetablePositionService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class MapController extends Controller
 {
     /**
-     * Latest known position of every train (initial map state; live updates come over the
-     * "map-trains" WebSocket channel as "TrainPositionUpdated" events).
+     * Where every running train should be right now, according to the timetable.
+     * The map polls this every few seconds; the result is cached for 10 seconds
+     * so many open maps don't recalculate it on every request.
      */
-    public function trains(): JsonResponse
+    public function trains(TimetablePositionService $positions): JsonResponse
+    {
+        return response()->json(
+            Cache::remember('map.timetable-positions', 10, fn () => $positions->positionsAt(now())->all())
+        );
+    }
+
+    /**
+     * Latest real GPS position of every train (from POST /train-positions, e.g. the
+     * trains:simulate command or a future GPS feed). Live updates also come over the
+     * "map-trains" WebSocket channel as "TrainPositionUpdated" events.
+     */
+    public function gpsPositions(): JsonResponse
     {
         $latestPositions = TrainPosition::select('train_positions.*')
             ->joinSub(

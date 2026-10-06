@@ -53,6 +53,17 @@ class TrainSearchTest extends TestCase
             ->assertJsonCount(0);
     }
 
+    public function test_search_filters_by_departure_time(): void
+    {
+        $this->getJson('/api/search-trains?from=riga&to=tukums&time=07:30')
+            ->assertOk()
+            ->assertJsonCount(1);
+
+        $this->getJson('/api/search-trains?from=riga&to=tukums&time=08:01')
+            ->assertOk()
+            ->assertJsonCount(0);
+    }
+
     public function test_search_skips_days_the_service_is_removed(): void
     {
         $date = now()->addDays(3)->toDateString();

@@ -24,8 +24,9 @@ class TrainController extends Controller
     }
 
     /**
-     * GET /search-trains?from=Rīga&to=Jelgava&date=2026-10-05
+     * GET /search-trains?from=Rīga&to=Jelgava&date=2026-10-05&time=17:00
      * "from" / "to" accept a stop_id (from /stops?search=) or part of a station name.
+     * "time" (optional) only returns trains departing at or after that time.
      */
     public function search(Request $request, TrainSearchService $trains): JsonResponse
     {
@@ -33,6 +34,7 @@ class TrainController extends Controller
             'from' => 'required|string|max:100',
             'to' => 'required|string|max:100',
             'date' => 'nullable|date_format:Y-m-d',
+            'time' => 'nullable|date_format:H:i',
         ]);
 
         $date = Carbon::parse($data['date'] ?? today());
@@ -41,6 +43,7 @@ class TrainController extends Controller
             $trains->resolveStopIds($data['from']),
             $trains->resolveStopIds($data['to']),
             $date,
+            departAfter: $data['time'] ?? null,
         ));
     }
 }

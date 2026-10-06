@@ -20,12 +20,6 @@ use App\Http\Controllers\TripController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Authentication (Sanctum SPA cookies: GET /sanctum/csrf-cookie first)
-|--------------------------------------------------------------------------
-*/
-
 Route::middleware('throttle:10,1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
@@ -37,11 +31,7 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 've
     ->middleware('signed')
     ->name('verification.verify');
 
-/*
-|--------------------------------------------------------------------------
-| Logged-in user: profile, tickets, payments
-|--------------------------------------------------------------------------
-*/
+
 
 Route::middleware(['auth:sanctum', 'lang'])->group(function () {
     Route::get('/user', fn (Request $request) => $request->user());
@@ -61,11 +51,7 @@ Route::middleware(['auth:sanctum', 'lang'])->group(function () {
     Route::post('/payments/{payment}/refund', [PaymentController::class, 'refund']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| Public: timetable (GTFS), station search, map
-|--------------------------------------------------------------------------
-*/
+
 
 Route::middleware('lang')->group(function () {
     Route::get('/search-trains', [TrainController::class, 'search']);
@@ -102,14 +88,10 @@ Route::middleware('lang')->group(function () {
     Route::get('/fare_rules/{fare_id}', [FareRuleController::class, 'show']);
 
     Route::get('/map/trains', [MapController::class, 'trains']);
+    Route::get('/map/gps-positions', [MapController::class, 'gpsPositions']);
     Route::get('/map/trains/{trainId}/history', [MapController::class, 'history']);
     Route::get('/map/train-route/{trip_id}', [MapController::class, 'route']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| GPS devices / simulator (Authorization: Bearer TRAIN_TRACKER_TOKEN)
-|--------------------------------------------------------------------------
-*/
 
 Route::post('/train-positions', [TrainPositionController::class, 'store'])->middleware('train.tracker');

@@ -28,12 +28,13 @@ class TrainSearchService
 
     /**
      * Trips that stop at one of $fromStopIds and later at one of $toStopIds and run on $date.
+     * $departAfter ("HH:MM") skips trains that leave earlier.
      *
      * @param  Collection<int, string>  $fromStopIds
      * @param  Collection<int, string>  $toStopIds
      * @return Collection<int, object{trip_id: string, trip_headsign: ?string, route_long_name: ?string, from_stop_id: string, from_station: string, to_stop_id: string, to_station: string, departure_time: string, arrival_time: string, price: ?string, currency: ?string}>
      */
-    public function search(Collection $fromStopIds, Collection $toStopIds, CarbonInterface $date, ?string $tripId = null, int $limit = 20): Collection
+    public function search(Collection $fromStopIds, Collection $toStopIds, CarbonInterface $date, ?string $tripId = null, int $limit = 20, ?string $departAfter = null): Collection
     {
         return DB::table('stop_times as st_from')
             ->join('stop_times as st_to', 'st_to.trip_id', '=', 'st_from.trip_id')
@@ -52,6 +53,8 @@ class TrainSearchService
             ->whereColumn('st_from.stop_sequence', '<', 'st_to.stop_sequence')
             ->whereIn('trips.service_id', $this->activeServiceIds($date))
             ->when($tripId, fn ($query) => $query->where('trips.trip_id', $tripId))
+            // GTFS times are zero-padded "HH:MM:SS" strings, so text comparison works
+            ->when($departAfter, fn ($query) => $query->where('st_from.departure_time', '>=', $departAfter.':00'))
             ->select(
                 'trips.trip_id',
                 'trips.trip_headsign',
