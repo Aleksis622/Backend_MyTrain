@@ -23,11 +23,7 @@ class TrainController extends Controller
         ];
     }
 
-    /**
-     * GET /search-trains?from=Rīga&to=Jelgava&date=2026-10-05&time=17:00
-     * "from" / "to" accept a stop_id (from /stops?search=) or part of a station name.
-     * "time" (optional) only returns trains departing at or after that time.
-     */
+   
     public function search(Request $request, TrainSearchService $trains): JsonResponse
     {
         $data = $request->validate([

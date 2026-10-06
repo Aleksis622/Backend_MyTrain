@@ -11,11 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class MapController extends Controller
 {
-    /**
-     * Where every running train should be right now, according to the timetable.
-     * The map polls this every few seconds; the result is cached for 10 seconds
-     * so many open maps don't recalculate it on every request.
-     */
+    
     public function trains(TimetablePositionService $positions): JsonResponse
     {
         return response()->json(
@@ -23,11 +19,7 @@ class MapController extends Controller
         );
     }
 
-    /**
-     * Latest real GPS position of every train (from POST /train-positions, e.g. the
-     * trains:simulate command or a future GPS feed). Live updates also come over the
-     * "map-trains" WebSocket channel as "TrainPositionUpdated" events.
-     */
+    
     public function gpsPositions(): JsonResponse
     {
         $latestPositions = TrainPosition::select('train_positions.*')
@@ -60,9 +52,7 @@ class MapController extends Controller
         return response()->json($history);
     }
 
-    /**
-     * [lon, lat] pairs of a trip's stops in order, ready for a Mapbox LineString.
-     */
+    
     public function route(string $tripId): JsonResponse
     {
         $coords = StopTime::where('trip_id', $tripId)
