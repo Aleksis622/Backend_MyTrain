@@ -1,0 +1,124 @@
+{
+  "navigation": {
+    "home": "Home",
+    "map": "Map",
+    "routes": "Routes",
+    "stops": "Stops",
+    "profile": "Profile",
+    "login": "Login"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong. Please try again.",
+    "not_found": "Page not found",
+    "back_home": "Back to home"
+  },
+  "home": {
+    "welcome": "Welcome to MyTrain!",
+    "welcome_sub": "Choose your journey and start traveling.",
+    "popular_routes": "Popular routes"
+  },
+  "trains": {
+    "from": "From",
+    "to": "To",
+    "search": "Search",
+    "validation": "Please choose both stations.",
+    "results": "Search results",
+    "no_results": "No trains found for this date.",
+    "no_price": "No fare",
+    "buy": "Buy ticket",
+    "date": "Date",
+    "depart_after": "Depart after",
+    "sort_by": "Sort by",
+    "sort_departure": "Departure time",
+    "sort_duration": "Travel time",
+    "sort_price": "Price",
+    "only_buyable": "Only trains with a ticket price",
+    "swap": "Swap stations",
+    "duration": "{{minutes}} min"
+  },
+  "tickets": {
+    "title": "My tickets",
+    "empty": "You have no tickets yet.",
+    "code": "Ticket code",
+    "departure": "Departure",
+    "price": "Price",
+    "pay": "Pay now",
+    "cancel": "Cancel",
+    "refund": "Refund",
+    "confirm_cancel": "Cancel this ticket?",
+    "confirm_refund": "Refund this ticket?",
+    "status": {
+      "pending": "Waiting for payment",
+      "paid": "Paid",
+      "cancelled": "Cancelled"
+    }
+  },
+  "payment": {
+    "choose_method": "Choose payment method",
+    "card": "Credit card",
+    "bank": "Swedbank",
+    "paypal": "PayPal",
+    "provider_title": "Test payment provider",
+    "provider_note": "This is a fake provider for testing. No real money is charged.",
+    "confirm": "Confirm payment",
+    "cancel": "Cancel",
+    "success_title": "Payment successful!",
+    "success_text": "Your ticket is now paid and active.",
+    "failed_title": "Payment cancelled",
+    "failed_text": "Your ticket is still unpaid. You can pay for it later.",
+    "to_tickets": "Go to my tickets"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "new_password": "New password",
+    "confirm_password": "Confirm password",
+    "no_account": "No account yet?",
+    "have_account": "Already have an account?",
+    "forgot_password": "Forgot password?",
+    "forgot_title": "Forgot password",
+    "send_link": "Send reset link",
+    "link_sent": "If this email is registered, a reset link has been sent.",
+    "reset_title": "Reset password",
+    "reset_button": "Reset password",
+    "reset_success": "Your password has been changed. You can log in now.",
+    "back_to_login": "Back to login",
+    "fill_all": "Please fill in all fields.",
+    "passwords_differ": "Passwords do not match.",
+    "email_verified_title": "Email verified",
+    "email_verified_text": "Your email address has been verified."
+  },
+  "profile": {
+    "title": "Profile",
+    "language": "Language",
+    "not_verified": "Your email is not verified yet.",
+    "resend": "Resend verification email",
+    "resend_sent": "Verification email sent.",
+    "verified": "Email verified",
+    "logout": "Logout",
+    "tab_account": "Account"
+  },
+  "routes": {
+    "title": "Routes",
+    "empty": "No routes found.",
+    "agency": "Operator"
+  },
+  "stops": {
+    "title": "Stations",
+    "empty": "No stations found.",
+    "coordinates": "Coordinates"
+  },
+  "map": {
+    "title": "Train map",
+    "subtitle": "Positions are estimated from the timetable and refresh every 15 seconds. Click a train to see its route.",
+    "running_one": "{{count}} train running now",
+    "running_other": "{{count}} trains running now",
+    "at_station": "At {{station}} station",
+    "between": "Between {{from}} and {{to}}",
+    "next_stop": "Next: {{station}} at {{time}}"
+  }
+}

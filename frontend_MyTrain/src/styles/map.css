@@ -1,0 +1,26 @@
+.map-container {
+  width: 100%;
+  height: 600px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.mapboxgl-canvas {
+  outline: none;
+}
+
+.train-marker {
+  width: 22px;
+  height: 22px;
+  background: #ff5722;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+/* Train waiting at a station */
+.train-marker.at-station {
+  background: #2e7d32;
+}

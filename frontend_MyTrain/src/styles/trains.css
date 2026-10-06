@@ -1,0 +1,124 @@
+/* Train search form, station autocomplete and search results. */
+
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+/* From [⇄] To */
+.search-stations {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.swap-button {
+  padding: 9px 14px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Date, time, sorting, checkbox and the search button on one line */
+.search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.search-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.search-filters .checkbox-label {
+  flex-direction: row;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.search-filters .checkbox-label input {
+  width: auto;
+}
+
+.search-filters .btn {
+  margin-left: auto;
+}
+
+@media (max-width: 700px) {
+  .search-stations {
+    grid-template-columns: 1fr;
+  }
+
+  .search-filters label,
+  .search-filters .btn {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+.station-input {
+  position: relative;
+}
+
+.station-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.station-suggestions li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.station-suggestions li:hover {
+  background: var(--color-bg);
+}
+
+.train-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.train-times {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.train-stations {
+  color: var(--color-muted);
+}
+
+.train-buy {
+  text-align: right;
+}
+
+.train-price {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.popular-routes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
