@@ -2,58 +2,67 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StopTime;
 use App\Models\TrainPosition;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class MapController extends Controller
 {
-    
-    public function trains()
+    /**
+     * Latest known position of every train (initial map state; live updates come over the
+     * "map-trains" WebSocket channel as "TrainPositionUpdated" events).
+     */
+    public function trains(): JsonResponse
     {
-        
-        $latestPositions = TrainPosition::select(
-                'train_positions.*'
-            )
-            ->join(
-                DB::raw('(SELECT train_id, MAX(reported_at) AS latest FROM train_positions GROUP BY train_id) AS lp'),
+        $latestPositions = TrainPosition::select('train_positions.*')
+            ->joinSub(
+                TrainPosition::select('train_id', DB::raw('MAX(reported_at) AS latest'))->groupBy('train_id'),
+                'lp',
                 function ($join) {
                     $join->on('train_positions.train_id', '=', 'lp.train_id')
-                         ->on('train_positions.reported_at', '=', 'lp.latest');
+                        ->on('train_positions.reported_at', '=', 'lp.latest');
                 }
             )
-            ->with(['train'])
-            ->orderBy('reported_at', 'desc')
+            ->with('train')
+            ->orderByDesc('reported_at')
             ->get();
 
-        return $latestPositions;
+        return response()->json($latestPositions);
     }
 
-    public function history($trainId)
+    public function history(int $trainId): JsonResponse
     {
-        $history = TrainPosition::with('train')
-            ->where('train_id', $trainId)
-            ->orderBy('reported_at', 'desc')
+        $history = TrainPosition::where('train_id', $trainId)
+            ->orderByDesc('reported_at')
+            ->limit(500)
             ->get();
 
         if ($history->isEmpty()) {
             return response()->json(['error' => 'No position history found'], 404);
         }
 
-        return $history;
+        return response()->json($history);
     }
-    public function route($tripId)
-{
-    $stops = \App\Models\StopTime::where('trip_id', $tripId)
-        ->orderBy('stop_sequence')
-        ->with('stop')
-        ->get();
 
-    $coords = $stops->map(fn($s) => [
-        $s->stop->stop_lon,
-        $s->stop->stop_lat
-    ]);
+    /**
+     * [lon, lat] pairs of a trip's stops in order, ready for a Mapbox LineString.
+     */
+    public function route(string $tripId): JsonResponse
+    {
+        $coords = StopTime::where('trip_id', $tripId)
+            ->orderBy('stop_sequence')
+            ->with('stop')
+            ->get()
+            ->filter(fn (StopTime $stopTime) => $stopTime->stop
+                && $stopTime->stop->stop_lon !== null
+                && $stopTime->stop->stop_lat !== null)
+            ->map(fn (StopTime $stopTime) => [
+                (float) $stopTime->stop->stop_lon,
+                (float) $stopTime->stop->stop_lat,
+            ])
+            ->values();
 
-    return response()->json($coords);
-}
-
+        return response()->json($coords);
+    }
 }

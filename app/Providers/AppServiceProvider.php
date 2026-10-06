@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
-use App\Http\Middleware\SetUserLanguage;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-         app('router')->aliasMiddleware('lang', SetUserLanguage::class);
+        // The reset form lives in the SPA, which then POSTs to /api/reset-password.
+        ResetPassword::createUrlUsing(fn (User $user, string $token) => config('services.frontend.url')
+            .'/reset-password?token='.$token.'&email='.urlencode($user->getEmailForPasswordReset()));
     }
 }

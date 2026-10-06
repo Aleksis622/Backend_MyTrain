@@ -1,39 +1,13 @@
 <?php
 
+use App\Http\Middleware\EnsureTrainTrackerToken;
+use App\Http\Middleware\SetUserLanguage;
 use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Configuration\Exceptions;
-
-use Illuminate\Http\Middleware\HandleCors;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
-
-    ->withMiddleware(function (Middleware $middleware) {
-
-        
-        $middleware->web();
-
-       
-        $middleware->group('web', [
-            \Illuminate\Cookie\Middleware\EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
-        ]);
-
-        
-        $middleware->use([
-            HandleCors::class,
-            EnsureFrontendRequestsAreStateful::class,
-        ]);
-
-        
-        $middleware->alias([
-            'lang' => \App\Http\Middleware\SetUserLanguage::class,
-        ]);
-    })
 
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -42,7 +16,24 @@ return Application::configure(basePath: dirname(__DIR__))
         channels: __DIR__.'/../routes/channels.php',
     )
 
-    ->withExceptions(function (Exceptions $exceptions) {
-        //
+    ->withMiddleware(function (Middleware $middleware) {
+
+        // Sanctum SPA (cookie) authentication for the "api" middleware group.
+        // Adds session + CSRF handling for requests coming from SANCTUM_STATEFUL_DOMAINS.
+        // HandleCors is already part of Laravel's default global middleware.
+        $middleware->statefulApi();
+
+        $middleware->alias([
+            'lang' => SetUserLanguage::class,
+            'train.tracker' => EnsureTrainTrackerToken::class,
+        ]);
     })
+
+    ->withExceptions(function (Exceptions $exceptions) {
+        // Always answer API requests with JSON errors instead of HTML error pages.
+        $exceptions->shouldRenderJsonWhen(
+            fn (Request $request) => $request->is('api/*') || $request->expectsJson()
+        );
+    })
+
     ->create();

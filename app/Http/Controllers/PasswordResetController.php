@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Hash;
 
 class PasswordResetController extends Controller
 {
-    public function sendResetLink(Request $request)
+    public function sendResetLink(Request $request): JsonResponse
     {
         $request->validate(['email' => 'required|email']);
 
@@ -16,28 +17,26 @@ class PasswordResetController extends Controller
 
         return $status === Password::RESET_LINK_SENT
             ? response()->json(['message' => 'Reset link sent'])
-            : response()->json(['error' => 'Unable to send reset link'], 400);
+            : response()->json(['error' => __($status)], 400);
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(Request $request): JsonResponse
     {
         $request->validate([
-            'token'    => 'required',
-            'email'    => 'required|email',
+            'token' => 'required',
+            'email' => 'required|email',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password),
-                ])->save();
+            function (User $user, string $password) {
+                $user->forceFill(['password' => $password])->save();
             }
         );
 
         return $status === Password::PASSWORD_RESET
             ? response()->json(['message' => 'Password reset successful'])
-            : response()->json(['error' => 'Password reset failed'], 400);
+            : response()->json(['error' => __($status)], 400);
     }
 }

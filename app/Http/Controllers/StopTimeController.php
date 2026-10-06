@@ -3,22 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\StopTime;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class StopTimeController extends Controller
 {
-    public function index()
+    public function index(): LengthAwarePaginator
     {
-        return StopTime::all();
+        return StopTime::paginate(100);
     }
 
-    public function show($id)
+    public function show(int $id): StopTime
     {
-        $time = StopTime::find($id);
-
-        if (!$time) {
-            return response()->json(['error' => 'Stop time not found'], 404);
-        }
-
-        return $time;
+        return StopTime::findOrFail($id);
     }
 }

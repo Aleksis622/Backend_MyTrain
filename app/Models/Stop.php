@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Stop extends Model
 {
@@ -12,7 +12,10 @@ class Stop extends Model
     protected $table = 'stops';
 
     protected $primaryKey = 'stop_id';
+
     public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'stop_id',
@@ -34,16 +37,13 @@ class Stop extends Model
         return $this->hasMany(StopTime::class, 'stop_id', 'stop_id');
     }
 
-    
     public function originJourneys()
     {
         return $this->hasMany(Journey::class, 'from_stop_id');
     }
 
-    
     public function destinationJourneys()
     {
         return $this->hasMany(Journey::class, 'to_stop_id');
     }
 }
-

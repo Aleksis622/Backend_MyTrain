@@ -7,23 +7,33 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * Frontend (Laravel Echo): Echo.channel('map-trains').listen('.TrainPositionUpdated', (position) => ...)
+ * Note the leading dot, required because of broadcastAs().
+ */
 class TrainPositionUpdated implements ShouldBroadcastNow
 {
     use SerializesModels;
 
-    public $position;
-
-    public function __construct(TrainPosition $position)
+    public function __construct(public TrainPosition $position)
     {
-        $this->position = $position->load('train');
+        $this->position->loadMissing('train');
     }
 
-    public function broadcastOn()
+    public function broadcastOn(): Channel
     {
         return new Channel('map-trains');
     }
 
-    public function broadcastWith()
+    public function broadcastAs(): string
+    {
+        return 'TrainPositionUpdated';
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
     {
         return $this->position->toArray();
     }

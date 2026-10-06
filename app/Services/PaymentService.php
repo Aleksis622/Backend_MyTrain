@@ -2,68 +2,80 @@
 
 namespace App\Services;
 
+use App\Exceptions\BookingException;
 use App\Models\Payment;
 use App\Models\Ticket;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Payment lifecycle: pending -> paid -> refunded.
+ * The ticket follows along: pending -> paid -> cancelled.
+ */
 class PaymentService
 {
-   
-    public function createPendingPayment(Ticket $ticket, $userId, $provider)
+    /**
+     * Start paying for a ticket. Re-uses an existing pending payment so double clicks don't create duplicates.
+     */
+    public function createPendingPayment(Ticket $ticket, string $provider): Payment
     {
-        // Prevent duplicate payments
-        if ($ticket->payment && $ticket->payment->status === 'paid') {
-            throw new \Exception("Ticket already paid");
+        if ($ticket->status !== 'pending') {
+            throw new BookingException("Ticket is {$ticket->status} and cannot be paid.");
         }
 
-        return Payment::create([
-            'ticket_id' => $ticket->id,
-            'user_id'   => $userId,
-            'provider'  => $provider,
-            'amount'    => $ticket->price,
-            'currency'  => $ticket->currency,
-            'status'    => 'pending',
-        ]);
+        return $ticket->payments()->firstOrCreate(
+            ['status' => 'pending'],
+            [
+                'user_id' => $ticket->user_id,
+                'provider' => $provider,
+                'amount' => $ticket->price,
+                'currency' => $ticket->currency,
+            ],
+        );
     }
 
-   
-    public function confirmPayment(Payment $payment, $providerPaymentId = null)
+    /**
+     * Mark a payment as paid. In production this should be called from the
+     * payment provider's webhook after verifying its signature, not by the user.
+     */
+    public function confirmPayment(Payment $payment, ?string $providerPaymentId = null): Payment
     {
-        $payment->update([
-            'status' => 'paid',
-            'provider_payment_id' => $providerPaymentId,
-            'paid_at' => now(),
-        ]);
+        return DB::transaction(function () use ($payment, $providerPaymentId) {
+            $payment = Payment::lockForUpdate()->findOrFail($payment->id);
 
-        // Mark ticket as paid
-        $payment->ticket->update([
-            'status' => 'paid',
-        ]);
+            if ($payment->status !== 'pending') {
+                throw new BookingException("Payment is already {$payment->status}.");
+            }
 
-        Log::info("Payment confirmed", [
-            'payment_id' => $payment->id,
-            'ticket_id' => $payment->ticket_id,
-        ]);
+            $payment->update([
+                'status' => 'paid',
+                'provider_payment_id' => $providerPaymentId,
+                'paid_at' => now(),
+            ]);
 
-        return $payment;
+            $payment->ticket->update(['status' => 'paid']);
+
+            Log::info('Payment confirmed', ['payment_id' => $payment->id, 'ticket_id' => $payment->ticket_id]);
+
+            return $payment;
+        });
     }
 
-    
-    public function refund(Payment $payment)
+    public function refund(Payment $payment): Payment
     {
-        if ($payment->status !== 'paid') {
-            throw new \Exception("Cannot refund unpaid payment");
-        }
+        return DB::transaction(function () use ($payment) {
+            $payment = Payment::lockForUpdate()->findOrFail($payment->id);
 
-        $payment->update([
-            'status' => 'refunded',
-        ]);
+            if ($payment->status !== 'paid') {
+                throw new BookingException('Only paid payments can be refunded.');
+            }
 
-        Log::warning("Payment refunded", [
-            'payment_id' => $payment->id,
-            'ticket_id' => $payment->ticket_id,
-        ]);
+            $payment->update(['status' => 'refunded']);
+            $payment->ticket->update(['status' => 'cancelled']);
 
-        return $payment;
+            Log::warning('Payment refunded', ['payment_id' => $payment->id, 'ticket_id' => $payment->ticket_id]);
+
+            return $payment;
+        });
     }
 }

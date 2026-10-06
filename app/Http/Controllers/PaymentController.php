@@ -4,132 +4,68 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Models\Ticket;
-use Illuminate\Http\Request;
 use App\Services\PaymentService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class PaymentController extends Controller
 {
-    protected $service;
+    public function __construct(private PaymentService $payments) {}
 
-    public function __construct(PaymentService $service)
+    public function index(Request $request): LengthAwarePaginator
     {
-        $this->service = $service;
-    }
-
-    /**
-     * List all payments for authenticated user
-     */
-    public function index(Request $request)
-    {
-        return Payment::where('user_id', $request->user()->id)
-            ->with(['ticket'])
-            ->orderBy('created_at', 'desc')
+        return $request->user()->payments()
+            ->with('ticket')
+            ->latest()
             ->paginate(20);
     }
 
-    /**
-     * Show a single payment
-     */
-    public function show(Request $request, $id)
+    public function show(Payment $payment): Payment
     {
-        $payment = Payment::with(['ticket', 'user'])->findOrFail($id);
+        Gate::authorize('manage', $payment);
 
-        // Prevent viewing other users' payments
-        if ($payment->user_id !== $request->user()->id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        return $payment;
+        return $payment->load('ticket');
     }
 
-    /**
-     * Create a new pending payment
-     */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'ticket_id' => 'required|exists:tickets,id',
-            'provider'  => 'required|string',
+            'ticket_id' => 'required|integer|exists:tickets,id',
+            'provider' => 'required|string|max:50',
         ]);
 
         $ticket = Ticket::findOrFail($data['ticket_id']);
-
-        // Prevent paying someone else's ticket
-        if ($ticket->user_id !== $request->user()->id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        try {
-            $payment = $this->service->createPendingPayment(
-                $ticket,
-                $request->user()->id,
-                $data['provider']
-            );
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage()
-            ], 400);
-        }
+        Gate::authorize('manage', $ticket);
 
         return response()->json([
             'message' => 'Payment created',
-            'payment' => $payment,
+            'payment' => $this->payments->createPendingPayment($ticket, $data['provider']),
         ], 201);
     }
 
-    /**
-     * Confirm payment (provider callback or manual)
-     */
-    public function confirm(Request $request, $id)
+    public function confirm(Request $request, Payment $payment): JsonResponse
     {
-        $payment = Payment::findOrFail($id);
+        Gate::authorize('manage', $payment);
 
-        // Prevent confirming other users' payments
-        if ($payment->user_id !== $request->user()->id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        try {
-            $confirmed = $this->service->confirmPayment(
-                $payment,
-                $request->provider_payment_id ?? null
-            );
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage()
-            ], 400);
-        }
+        $data = $request->validate([
+            'provider_payment_id' => 'nullable|string|max:255',
+        ]);
 
         return response()->json([
             'message' => 'Payment confirmed',
-            'payment' => $confirmed,
+            'payment' => $this->payments->confirmPayment($payment, $data['provider_payment_id'] ?? null),
         ]);
     }
 
-    /**
-     * Refund payment
-     */
-    public function refund(Request $request, $id)
+    public function refund(Payment $payment): JsonResponse
     {
-        $payment = Payment::findOrFail($id);
-
-        // Prevent refunding other users' payments
-        if ($payment->user_id !== $request->user()->id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        try {
-            $refunded = $this->service->refund($payment);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage()
-            ], 400);
-        }
+        Gate::authorize('manage', $payment);
 
         return response()->json([
             'message' => 'Payment refunded',
-            'payment' => $refunded,
+            'payment' => $this->payments->refund($payment),
         ]);
     }
-    
 }

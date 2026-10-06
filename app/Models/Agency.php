@@ -8,6 +8,12 @@ class Agency extends Model
 {
     protected $table = 'agencies';
 
+    protected $primaryKey = 'agency_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     protected $fillable = [
         'agency_id',
         'agency_name',

@@ -17,7 +17,7 @@ class AdminTrainController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string',
-            'operator' => 'nullable|string'
+            'operator' => 'nullable|string',
         ]);
 
         return Train::create($data);

@@ -2,50 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TrainPositionUpdated;
 use App\Models\TrainPosition;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class TrainPositionController extends Controller
 {
-   
-    public function index()
-    {
-        return TrainPosition::with('train')
-            ->orderBy('reported_at', 'desc')
-            ->get();
-    }
-
-   
-    public function show($trainId)
-    {
-        return TrainPosition::where('train_id', $trainId)
-            ->orderBy('reported_at', 'desc')
-            ->firstOrFail();
-    }
-
-    
-    public function store(Request $request)
+    /**
+     * Called by GPS devices / the simulator (protected by the train.tracker middleware).
+     */
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'train_id'    => 'required|exists:trains,id',
-            'latitude'    => 'required|numeric',
-            'longitude'   => 'required|numeric',
-            'speed'       => 'nullable|numeric',
-            'heading'     => 'nullable|numeric',
+            'train_id' => 'required|exists:trains,id',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'speed' => 'nullable|numeric|min:0',
+            'heading' => 'nullable|numeric|between:0,360',
             'reported_at' => 'nullable|date',
         ]);
 
         $position = TrainPosition::create([
-            'train_id'    => $data['train_id'],
-            'latitude'    => $data['latitude'],
-            'longitude'   => $data['longitude'],
-            'speed'       => $data['speed'] ?? null,
-            'heading'     => $data['heading'] ?? null,
+            ...$data,
             'reported_at' => $data['reported_at'] ?? now(),
         ]);
 
+        // Pushes the new position to every map listening on the "map-trains" channel.
+        event(new TrainPositionUpdated($position));
+
         return response()->json([
-            'message'  => 'Train position updated',
+            'message' => 'Train position updated',
             'position' => $position,
         ], 201);
     }

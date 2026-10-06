@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Route extends Model
 {
@@ -12,7 +12,10 @@ class Route extends Model
     protected $table = 'routes';
 
     protected $primaryKey = 'route_id';
+
     public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'route_id',
@@ -43,16 +46,15 @@ class Route extends Model
         return $this->hasMany(FareRule::class, 'route_id', 'route_id');
     }
 
-    
     public function journeys()
     {
         return $this->hasManyThrough(
             Journey::class,
             Trip::class,
-            'route_id',   
-            'trip_id',    
-            'route_id',   
-            'trip_id'     
+            'route_id',
+            'trip_id',
+            'route_id',
+            'trip_id'
         );
     }
 }

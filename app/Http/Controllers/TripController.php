@@ -2,32 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StopTime;
 use App\Models\Trip;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\JsonResponse;
 
 class TripController extends Controller
 {
-    public function index()
+    public function index(): LengthAwarePaginator
     {
-        return Trip::with(['route', 'calendar', 'calendarDates'])
-            ->paginate(50);
+        return Trip::with(['route', 'calendar', 'calendarDates'])->paginate(50);
     }
 
-    public function show($trip_id)
+    public function show(string $trip_id): Trip
     {
-        $trip = Trip::with(['route', 'stopTimes.stop', 'calendar', 'calendarDates'])
-            ->where('trip_id', $trip_id)
-            ->first();
-
-        if (!$trip) {
-            return response()->json(['error' => 'Trip not found'], 404);
-        }
-
-        return $trip;
+        return Trip::with(['route', 'stopTimes.stop', 'calendar', 'calendarDates'])->findOrFail($trip_id);
     }
 
-    public function stopTimes($trip_id)
+    public function stopTimes(string $trip_id): JsonResponse
     {
-        $times = \App\Models\StopTime::with('stop')
+        $times = StopTime::with('stop')
             ->where('trip_id', $trip_id)
             ->orderBy('stop_sequence')
             ->get();
@@ -36,6 +30,6 @@ class TripController extends Controller
             return response()->json(['error' => 'No stop times found for this trip'], 404);
         }
 
-        return $times;
+        return response()->json($times);
     }
 }

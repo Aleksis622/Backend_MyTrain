@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Calendar extends Model
 {
@@ -12,7 +12,10 @@ class Calendar extends Model
     protected $table = 'calendar';
 
     protected $primaryKey = 'service_id';
+
     public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'service_id',

@@ -3,69 +3,65 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use App\Services\TicketService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Gate;
 
 class TicketController extends Controller
 {
-    
-    public function index(Request $request)
+    public function __construct(private TicketService $tickets) {}
+
+    public function index(Request $request): LengthAwarePaginator
     {
-        return Ticket::where('user_id', $request->user()->id)
-            ->with(['journey.train'])
+        return $request->user()->tickets()
+            ->with(['journey.fromStop', 'journey.toStop', 'journey.trip.route', 'latestPayment'])
+            ->latest()
             ->paginate(20);
     }
 
-  
-    public function store(Request $request)
+    public function show(Ticket $ticket): Ticket
+    {
+        Gate::authorize('manage', $ticket);
+
+        return $ticket->load(['journey.fromStop', 'journey.toStop', 'journey.trip.route', 'payments']);
+    }
+
+    /**
+     * Buy a ticket for one /search-trains result. Send its trip_id, from_stop_id, to_stop_id and the travel date.
+     */
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'journey_id' => 'required|exists:journeys,id',
-            'price'      => 'required|numeric|min:0',
-            'currency'   => 'required|string|in:EUR,USD,GBP',
+            'trip_id' => 'required|string|exists:trips,trip_id',
+            'from_stop_id' => 'required|string|exists:stops,stop_id',
+            'to_stop_id' => 'required|string|exists:stops,stop_id|different:from_stop_id',
+            'date' => 'required|date_format:Y-m-d|after_or_equal:today',
         ]);
 
-        
-        $ticketCode = strtoupper(Str::random(10)); 
-
-        $ticket = Ticket::create([
-            'user_id'      => $request->user()->id,
-            'journey_id'   => $data['journey_id'],
-            'price'        => $data['price'],
-            'currency'     => $data['currency'],
-            'ticket_code'  => $ticketCode,
-            'status'       => 'confirmed', 
-            'purchased_at' => now(),
-        ]);
+        $ticket = $this->tickets->purchase(
+            $request->user(),
+            $data['trip_id'],
+            $data['from_stop_id'],
+            $data['to_stop_id'],
+            Carbon::parse($data['date']),
+        );
 
         return response()->json([
-            'message' => 'Ticket successfully created',
-            'ticket'  => $ticket,
+            'message' => 'Ticket created, waiting for payment',
+            'ticket' => $ticket->load(['journey.fromStop', 'journey.toStop']),
         ], 201);
     }
 
-    
-    public function markPaid(Ticket $ticket)
+    public function cancel(Ticket $ticket): JsonResponse
     {
-        $ticket->status = 'paid'; 
-        $ticket->save();
-
-        return response()->json([
-            'message' => 'Ticket marked as paid',
-            'ticket'  => $ticket,
-        ]);
-    }
-
-    
-    public function cancel(Ticket $ticket)
-    {
-        $ticket->status = 'cancelled';
-        $ticket->save();
+        Gate::authorize('manage', $ticket);
 
         return response()->json([
             'message' => 'Ticket cancelled',
-            'ticket'  => $ticket,
+            'ticket' => $this->tickets->cancel($ticket),
         ]);
     }
 }
-

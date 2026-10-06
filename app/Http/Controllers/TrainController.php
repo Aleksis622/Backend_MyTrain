@@ -2,76 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\TrainSearchService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 class TrainController extends Controller
 {
-   // for now static popular stations
-    public function popular()
+    /**
+     * Static list for the home page until real statistics exist.
+     *
+     * @return list<array{id: int, name: string, description: string}>
+     */
+    public function popular(): array
     {
         return [
-            [
-                'id' => 1,
-                'name' => 'Rīga → Jelgava',
-                'description' => 'Fast trains every 30 minutes'
-            ],
-            [
-                'id' => 2,
-                'name' => 'Rīga → Sigulda',
-                'description' => 'Popular scenic route'
-            ],
-            [
-                'id' => 3,
-                'name' => 'Rīga → Daugavpils',
-                'description' => 'Long-distance express'
-            ],
+            ['id' => 1, 'name' => 'Rīga → Jelgava', 'description' => 'Fast trains every 30 minutes'],
+            ['id' => 2, 'name' => 'Rīga → Sigulda', 'description' => 'Popular scenic route'],
+            ['id' => 3, 'name' => 'Rīga → Daugavpils', 'description' => 'Long-distance express'],
         ];
     }
 
-   
-    public function search(Request $request)
+    /**
+     * GET /search-trains?from=Rīga&to=Jelgava&date=2026-10-05
+     * "from" / "to" accept a stop_id (from /stops?search=) or part of a station name.
+     */
+    public function search(Request $request, TrainSearchService $trains): JsonResponse
     {
-        $request->validate([
-            'from' => 'required|string',
-            'to' => 'required|string',
+        $data = $request->validate([
+            'from' => 'required|string|max:100',
+            'to' => 'required|string|max:100',
+            'date' => 'nullable|date_format:Y-m-d',
         ]);
 
-        // Default date + weekday
-        $date = $request->date ?? date('Y-m-d');
-        $weekday = $request->weekday ?? date('N');
+        $date = Carbon::parse($data['date'] ?? today());
 
-        // Case-insensitive searching
-        $from = strtolower($request->from);
-        $to = strtolower($request->to);
-
-        $query = DB::table('stop_times as st_from')
-            ->join('stops as s_from', 's_from.stop_id', '=', 'st_from.stop_id')
-            ->join('stop_times as st_to', 'st_to.trip_id', '=', 'st_from.trip_id')
-            ->join('stops as s_to', 's_to.stop_id', '=', 'st_to.stop_id')
-            ->join('trips', 'trips.trip_id', '=', 'st_from.trip_id')
-            ->join('routes', 'routes.route_id', '=', 'trips.route_id')
-
-            // matching case insensitive stations
-            ->whereRaw('LOWER(s_from.stop_name) LIKE ?', ["%$from%"])
-            ->whereRaw('LOWER(s_to.stop_name) LIKE ?', ["%$to%"])
-
-            // Ensuring the correct direction - from -> to
-            ->whereColumn('st_from.stop_sequence', '<', 'st_to.stop_sequence')
-
-            ->select(
-                'trips.trip_id',
-                'trips.trip_headsign',
-                'routes.route_long_name',
-                's_from.stop_name as from_station',
-                's_to.stop_name as to_station',
-                'st_from.departure_time',
-                'st_to.arrival_time'
-            )
-            ->orderBy('st_from.departure_time')
-            ->limit(20)
-            ->get();
-
-        return $query;
+        return response()->json($trains->search(
+            $trains->resolveStopIds($data['from']),
+            $trains->resolveStopIds($data['to']),
+            $date,
+        ));
     }
 }

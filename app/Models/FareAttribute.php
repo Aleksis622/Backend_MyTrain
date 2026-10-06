@@ -8,6 +8,12 @@ class FareAttribute extends Model
 {
     protected $table = 'fare_attributes';
 
+    protected $primaryKey = 'fare_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     protected $fillable = [
         'fare_id',
         'price',
