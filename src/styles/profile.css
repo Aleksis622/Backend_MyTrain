@@ -1,0 +1,18 @@
+.profile-card dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 16px;
+  margin: 0 0 16px;
+}
+
+.profile-card dt {
+  font-weight: 600;
+}
+
+.profile-card dd {
+  margin: 0;
+}
+
+.verify-box {
+  margin-bottom: 16px;
+}

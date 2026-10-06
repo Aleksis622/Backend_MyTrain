@@ -1,28 +1,13 @@
 import api from "./api";
 
-// Get all tickets for the logged-in user
-export const all = () => {
-  return api.get("/tickets");
-};
+// Tickets of the logged-in user (paginated, newest first).
+export const all = () => api.get("/tickets");
 
-// Get one ticket by ID
-export const one = (id) => {
-  return api.get(`/tickets/${id}`);
-};
+export const one = (ticketId) => api.get(`/tickets/${ticketId}`);
 
-// Buy a ticket for a journey
-export const buy = (journeyId) => {
-  return api.post("/tickets/buy", { journey_id: journeyId });
-};
+// Buy a ticket for one search result. The backend calculates the price.
+export const create = ({ trip_id, from_stop_id, to_stop_id }, date) =>
+  api.post("/tickets", { trip_id, from_stop_id, to_stop_id, date });
 
-// Confirm payment
-export const pay = (paymentId, txId) => {
-  return api.post("/tickets/payment/confirm", {
-    payment_id: paymentId,
-    transaction_id: txId,
-  });
-};
-
-export const cancel = (id) => {
-  return api.post(`/tickets/${id}/cancel`);
-};
+// Only unpaid tickets can be cancelled. Paid tickets are refunded through their payment.
+export const cancel = (ticketId) => api.post(`/tickets/${ticketId}/cancel`);

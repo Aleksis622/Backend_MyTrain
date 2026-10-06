@@ -1,68 +1,109 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { all as getTickets } from "../api/tickets";
-import "./home.css";
+import { all as getTickets, cancel as cancelTicket } from "../api/tickets";
+import { refund as refundPayment } from "../api/payments";
+import { getErrorMessage, listFrom } from "../api/api";
+import { formatDateTime, formatPrice } from "../utils/format";
 
 function Tickets() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const loadTickets = useCallback(
+    () =>
+      getTickets()
+        .then((res) => setTickets(listFrom(res)))
+        .catch((err) => setError(getErrorMessage(err, t("common.error"))))
+        .finally(() => setLoading(false)),
+    [t]
+  );
 
   useEffect(() => {
-    getTickets().then(res => {
-      console.log("API RESPONSE:", res.data);
+    loadTickets();
+  }, [loadTickets]);
 
-      const list = Array.isArray(res.data) ? res.data : res.data.data;
+  // Runs a cancel/refund after the user confirms, then reloads the list.
+  const runAction = async (confirmText, action) => {
+    if (!window.confirm(confirmText)) return;
 
-      setTickets(list);
-    });
-  }, []);
-<button
-  className="btn"
-  onClick={() => navigate(`/payment/${ticket.id}`)}
->
-  Pay Now
-</button>
+    setError("");
+    try {
+      await action();
+      await loadTickets();
+    } catch (err) {
+      setError(getErrorMessage(err, t("common.error")));
+    }
+  };
+
+  if (loading) {
+    return <main className="page">{t("common.loading")}</main>;
+  }
 
   return (
-    <div className="tickets-page">
+    <main className="page">
       <h1>{t("tickets.title")}</h1>
 
-      <div className="ticket-list">
-        {tickets.length === 0 && (
-          <p style={{ opacity: 0.7 }}>{t("tickets.no_tickets")}</p>
-        )}
+      {error && <p className="alert alert-error">{error}</p>}
+      {tickets.length === 0 && <p className="muted">{t("tickets.empty")}</p>}
 
-        {tickets.map(ticket => (
-          <div key={ticket.id} className="ticket-card">
-            <h3>
-              {t("tickets.journey")}: {ticket.journey_name}
-            </h3>
+      <div className="card-list">
+        {tickets.map((ticket) => {
+          const { journey, latest_payment: payment } = ticket;
 
-            <p>
-              {t("tickets.from")}: {ticket.from_stop_name}
-            </p>
+          return (
+            <div key={ticket.id} className="card">
+              <h3>
+                {journey?.from_stop?.stop_name} → {journey?.to_stop?.stop_name}
+              </h3>
 
-            <p>
-              {t("tickets.to")}: {ticket.to_stop_name}
-            </p>
+              <p>
+                <span className={`badge badge-${ticket.status}`}>
+                  {t(`tickets.status.${ticket.status}`)}
+                </span>
+              </p>
+              <p>
+                {t("tickets.departure")}: {formatDateTime(journey?.departure_time, i18n.language)}
+              </p>
+              <p>
+                {t("tickets.price")}: {formatPrice(ticket.price, ticket.currency)}
+              </p>
+              <p className="muted">
+                {t("tickets.code")}: {ticket.ticket_code}
+              </p>
 
-            <p>
-              {t("tickets.date")}: {ticket.date}
-            </p>
+              <div className="card-actions">
+                {ticket.status === "pending" && (
+                  <>
+                    <Link className="btn" to={`/payment/${ticket.id}`}>
+                      {t("tickets.pay")}
+                    </Link>
+                    <button
+                      className="btn btn-outline"
+                      onClick={() => runAction(t("tickets.confirm_cancel"), () => cancelTicket(ticket.id))}
+                    >
+                      {t("tickets.cancel")}
+                    </button>
+                  </>
+                )}
 
-            <p>
-              {t("tickets.price")}: {ticket.price} EUR
-            </p>
-
-            <p>
-              {t("tickets.status")}: {ticket.status}
-            </p>
-          </div>
-        ))}
+                {ticket.status === "paid" && payment?.status === "paid" && (
+                  <button
+                    className="btn btn-outline"
+                    onClick={() => runAction(t("tickets.confirm_refund"), () => refundPayment(payment.id))}
+                  >
+                    {t("tickets.refund")}
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
-    </div>
+    </main>
   );
-  
 }
 
 export default Tickets;

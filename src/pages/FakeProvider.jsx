@@ -1,46 +1,65 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { confirmPayment, getPayment } from "../api/payments";
 import { useEffect, useState } from "react";
-import "./Payment.css";
+import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { confirm as confirmPayment, one as getPayment } from "../api/payments";
+import { getErrorMessage } from "../api/api";
+import { formatPrice } from "../utils/format";
+import "../styles/payment.css";
 
+// Step 2 of paying: pretends to be the bank / card page. Replace with a real provider later.
 function FakeProvider() {
+  const { t } = useTranslation();
   const { paymentId } = useParams();
   const navigate = useNavigate();
 
   const [payment, setPayment] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    getPayment(paymentId).then(res => setPayment(res.data));
-  }, [paymentId]);
+    getPayment(paymentId)
+      .then((res) => setPayment(res.data))
+      .catch((err) => setError(getErrorMessage(err, t("common.error"))));
+  }, [paymentId, t]);
 
   const handleConfirm = async () => {
-    await confirmPayment(paymentId);
-    navigate(`/payment/${paymentId}/success`);
+    setError("");
+    setLoading(true);
+    try {
+      await confirmPayment(paymentId);
+      navigate(`/payment/${paymentId}/success`);
+    } catch (err) {
+      setError(getErrorMessage(err, t("common.error")));
+      setLoading(false);
+    }
   };
-
-  const handleCancel = () => {
-    navigate(`/payment/${paymentId}/failed`);
-  };
-
-  if (!payment) return <p>Loading...</p>;
 
   return (
-    <div className="provider-page">
-      <h1>Fake Payment Provider</h1>
+    <main className="page page-narrow payment-page">
+      <h1>{t("payment.provider_title")}</h1>
+      <p className="muted">{t("payment.provider_note")}</p>
 
-      <p>Amount: {payment.amount} {payment.currency}</p>
-      <p>Ticket ID: {payment.ticket_id}</p>
+      {error && <p className="alert alert-error">{error}</p>}
 
-      <div className="provider-actions">
-        <button className="btn-success" onClick={handleConfirm}>
-          Confirm Payment
-        </button>
+      {payment && (
+        <>
+          <p className="payment-amount">{formatPrice(payment.amount, payment.currency)}</p>
 
-        <button className="btn-cancel" onClick={handleCancel}>
-          Cancel Payment
-        </button>
-      </div>
-    </div>
+          <div className="payment-actions">
+            <button className="btn btn-success" onClick={handleConfirm} disabled={loading}>
+              {t("payment.confirm")}
+            </button>
+            <button
+              className="btn btn-danger"
+              onClick={() => navigate(`/payment/${paymentId}/failed`)}
+              disabled={loading}
+            >
+              {t("payment.cancel")}
+            </button>
+          </div>
+        </>
+      )}
+    </main>
   );
 }
 

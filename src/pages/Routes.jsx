@@ -1,50 +1,47 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { all as getRoutes } from "../api/trips"; 
-import "./home.css";
+import { all as getRoutes } from "../api/routes";
+import { getErrorMessage, listFrom } from "../api/api";
 
 function RoutesPage() {
   const { t } = useTranslation();
   const [routes, setRoutes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    getRoutes().then(res => {
-      console.log("API RESPONSE:", res.data);
+    getRoutes()
+      .then((res) => setRoutes(listFrom(res)))
+      .catch((err) => setError(getErrorMessage(err, t("common.error"))))
+      .finally(() => setLoading(false));
+  }, [t]);
 
-      
-      const list = Array.isArray(res.data) ? res.data : res.data.data;
-
-      setRoutes(list);
-    });
-  }, []);
+  if (loading) {
+    return <main className="page">{t("common.loading")}</main>;
+  }
 
   return (
-    <div className="routes-page">
+    <main className="page">
       <h1>{t("routes.title")}</h1>
 
-      <div className="route-list">
-        {routes.length === 0 && (
-          <p style={{ opacity: 0.7 }}>{t("routes.no_routes")}</p>
-        )}
+      {error && <p className="alert alert-error">{error}</p>}
+      {!error && routes.length === 0 && <p className="muted">{t("routes.empty")}</p>}
 
-        {routes.map(route => (
-          <div key={route.route_id} className="route-card">
+      <div className="card-list">
+        {routes.map((route) => (
+          <div key={route.route_id} className="card">
             <h3>
-              {route.route_short_name || t("routes.unknown")} —{" "}
-              {route.route_long_name}
+              {route.route_short_name} {route.route_long_name}
             </h3>
-
-            <p>
-              {t("routes.type")}: {route.route_type}
-            </p>
-
-            <p>
-              {t("routes.agency")}: {route.agency_id}
-            </p>
+            {route.agency && (
+              <p className="muted">
+                {t("routes.agency")}: {route.agency.agency_name}
+              </p>
+            )}
           </div>
         ))}
       </div>
-    </div>
+    </main>
   );
 }
 

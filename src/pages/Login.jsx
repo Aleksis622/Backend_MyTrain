@@ -1,53 +1,74 @@
 import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/Auth";
-import { useNavigate } from "react-router-dom";
-import "./Auth.css";
+import { getErrorMessage } from "../api/api";
+import "../styles/auth.css";
 
 function Login() {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
-    setError(""); 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
-      await login(email, password);   
-      navigate("/profile");           
+      await login(email, password);
+      // Go back to the page that sent us here (e.g. "Buy ticket"), else the profile.
+      navigate(location.state?.from || "/profile", { replace: true });
     } catch (err) {
-      setError("Invalid email or password");
+      setError(getErrorMessage(err, t("common.error")));
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="auth-page">
-      <h1>Login</h1>
+    <main className="page page-narrow auth-page">
+      <h1>{t("auth.login")}</h1>
 
-      {error && <p className="auth-error">{error}</p>}
+      <form className="form" onSubmit={handleSubmit}>
+        {error && <p className="alert alert-error">{error}</p>}
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
+        <input
+          type="email"
+          placeholder={t("auth.email")}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder={t("auth.password")}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-      />
+        <button className="btn btn-block" type="submit" disabled={loading}>
+          {t("auth.login")}
+        </button>
+      </form>
 
-      <button onClick={handleLogin}>Login</button>
-
-      <p>
-        No account? <a href="/register">Register</a>
-      </p>
-    </div>
+      <div className="auth-links">
+        <Link to="/forgot-password">{t("auth.forgot_password")}</Link>
+        <span>
+          {t("auth.no_account")}{" "}
+          <Link to="/register" state={location.state}>
+            {t("auth.register")}
+          </Link>
+        </span>
+      </div>
+    </main>
   );
 }
 

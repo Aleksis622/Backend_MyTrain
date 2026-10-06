@@ -1,43 +1,59 @@
 import { useState } from "react";
-import api from "../api/api";
-import "./Auth.css";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { forgotPassword } from "../api/auth";
+import { getErrorMessage } from "../api/api";
+import "../styles/auth.css";
 
-export default function ForgotPassword() {
+function ForgotPassword() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setMessage("");
     setError("");
+    setLoading(true);
 
     try {
-      await api.post("/forgot-password", { email });
-      setMessage("Password reset link sent to your email.");
-    } catch {
-      setError("Failed to send reset link.");
+      await forgotPassword(email);
+      setMessage(t("auth.link_sent"));
+    } catch (err) {
+      setError(getErrorMessage(err, t("common.error")));
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="auth-page">
-      <h1>Forgot Password</h1>
+    <main className="page page-narrow auth-page">
+      <h1>{t("auth.forgot_title")}</h1>
 
-      {message && <p className="auth-success">{message}</p>}
-      {error && <p className="auth-error">{error}</p>}
+      <form className="form" onSubmit={handleSubmit}>
+        {message && <p className="alert alert-success">{message}</p>}
+        {error && <p className="alert alert-error">{error}</p>}
 
-      <input
-        type="email"
-        placeholder="Your email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
+        <input
+          type="email"
+          placeholder={t("auth.email")}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-      <button onClick={handleSubmit}>Send Reset Link</button>
+        <button className="btn btn-block" type="submit" disabled={loading}>
+          {t("auth.send_link")}
+        </button>
+      </form>
 
-      <p>
-        Remember your password? <a href="/login">Login</a>
-      </p>
-    </div>
+      <div className="auth-links">
+        <Link to="/login">{t("auth.back_to_login")}</Link>
+      </div>
+    </main>
   );
 }
+
+export default ForgotPassword;

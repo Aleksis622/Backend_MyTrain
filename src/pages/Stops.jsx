@@ -1,54 +1,43 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { all as getStops } from "../api/trips"; 
-import "./home.css";
+import { all as getStops } from "../api/stops";
+import { getErrorMessage, listFrom } from "../api/api";
 
 function Stops() {
   const { t } = useTranslation();
   const [stops, setStops] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    getStops().then(res => {
-      console.log("API RESPONSE:", res.data);
+    getStops()
+      .then((res) => setStops(listFrom(res)))
+      .catch((err) => setError(getErrorMessage(err, t("common.error"))))
+      .finally(() => setLoading(false));
+  }, [t]);
 
-      const list = Array.isArray(res.data) ? res.data : res.data.data;
-
-      setStops(list);
-    });
-  }, []);
+  if (loading) {
+    return <main className="page">{t("common.loading")}</main>;
+  }
 
   return (
-    <div className="stops-page">
+    <main className="page">
       <h1>{t("stops.title")}</h1>
 
-      <div className="stop-list">
-        {stops.length === 0 && (
-          <p style={{ opacity: 0.7 }}>{t("stops.no_stops")}</p>
-        )}
+      {error && <p className="alert alert-error">{error}</p>}
+      {!error && stops.length === 0 && <p className="muted">{t("stops.empty")}</p>}
 
-        {stops.map(stop => (
-          <div key={stop.stop_id} className="stop-card">
-            <h3>{stop.stop_name || t("stops.unknown")}</h3>
-
-            <p>
-              {t("stops.code")}: {stop.stop_code || "-"}
-            </p>
-
-            <p>
-              {t("stops.lat")}: {stop.stop_lat}
-            </p>
-
-            <p>
-              {t("stops.lon")}: {stop.stop_lon}
-            </p>
-
-            <p>
-              {t("stops.zone")}: {stop.zone_id || "-"}
+      <div className="card-list">
+        {stops.map((stop) => (
+          <div key={stop.stop_id} className="card">
+            <h3>{stop.stop_name}</h3>
+            <p className="muted">
+              {t("stops.coordinates")}: {stop.stop_lat}, {stop.stop_lon}
             </p>
           </div>
         ))}
       </div>
-    </div>
+    </main>
   );
 }
 

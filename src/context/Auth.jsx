@@ -1,32 +1,44 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { me, login as apiLogin, logout as apiLogout } from "../api/auth";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import * as authApi from "../api/auth";
 
-export const AuthContext = createContext(null);
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    me()
-      .then(res => setUser(res.data))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, []);
+  const refreshUser = useCallback(
+    () =>
+      authApi
+        .me()
+        .then((res) => setUser(res.data))
+        .catch(() => setUser(null)),
+    []
+  );
 
+  // On page load: is there already a logged-in session?
+  useEffect(() => {
+    refreshUser().finally(() => setLoading(false));
+  }, [refreshUser]);
+
+  // The backend logs the user in on register too, so both return the user.
   const login = async (email, password) => {
-    await apiLogin(email, password);
-    const userRes = await me();
-    setUser(userRes.data);
+    const res = await authApi.login(email, password);
+    setUser(res.data.user);
+  };
+
+  const register = async (fields) => {
+    const res = await authApi.register(fields);
+    setUser(res.data.user);
   };
 
   const logout = async () => {
-    await apiLogout();
+    await authApi.logout();
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

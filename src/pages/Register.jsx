@@ -1,67 +1,84 @@
 import { useState } from "react";
-import { register } from "../api/auth";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/Auth";
-import { useNavigate } from "react-router-dom";
-import "./Auth.css";
+import { getErrorMessage } from "../api/api";
+import "../styles/auth.css";
 
 function Register() {
-  const { login } = useAuth();
+  const { t, i18n } = useTranslation();
+  const { register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setError("");
 
+    if (!name || !email || !password) {
+      setError(t("auth.fill_all"));
+      return;
+    }
+
+    setLoading(true);
     try {
-      
-      await register(name, email, password);
-
-      
-      await login(email, password);
-
-      navigate("/profile");
+      // The backend logs the new user in, so no separate login is needed.
+      await register({ name, email, password, language: i18n.language });
+      navigate(location.state?.from || "/profile", { replace: true });
     } catch (err) {
-      setError("Registration failed. Check your details.");
+      setError(getErrorMessage(err, t("common.error")));
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="auth-page">
-      <h1>Register</h1>
+    <main className="page page-narrow auth-page">
+      <h1>{t("auth.register")}</h1>
 
-      {error && <p className="auth-error">{error}</p>}
+      <form className="form" onSubmit={handleSubmit}>
+        {error && <p className="alert alert-error">{error}</p>}
 
-      <input
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={e => setName(e.target.value)}
-      />
+        <input
+          type="text"
+          placeholder={t("auth.name")}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          type="email"
+          placeholder={t("auth.email")}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder={t("auth.password")}
+          value={password}
+          minLength={6}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
+        <button className="btn btn-block" type="submit" disabled={loading}>
+          {t("auth.register")}
+        </button>
+      </form>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-      />
-
-      <button onClick={handleRegister}>Register</button>
-
-      <p>
-        Already have an account? <a href="/login">Login</a>
-      </p>
-    </div>
+      <div className="auth-links">
+        <span>
+          {t("auth.have_account")}{" "}
+          <Link to="/login" state={location.state}>
+            {t("auth.login")}
+          </Link>
+        </span>
+      </div>
+    </main>
   );
 }
 

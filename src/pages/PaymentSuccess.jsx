@@ -1,15 +1,19 @@
-import { useParams } from "react-router-dom";
-import "./Payment.css";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import "../styles/payment.css";
 
 function PaymentSuccess() {
-  const { paymentId } = useParams();
+  const { t } = useTranslation();
 
   return (
-    <div className="payment-success">
-      <h1>Payment Successful!</h1>
-      <p>Your payment #{paymentId} has been confirmed.</p>
-      <p>Your ticket is now active.</p>
-    </div>
+    <main className="page page-narrow payment-page">
+      <h1>{t("payment.success_title")}</h1>
+      <p>{t("payment.success_text")}</p>
+
+      <Link className="btn" to="/tickets">
+        {t("payment.to_tickets")}
+      </Link>
+    </main>
   );
 }
 

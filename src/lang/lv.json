@@ -1,0 +1,112 @@
+{
+  "navigation": {
+    "home": "Sākums",
+    "trains": "Vilcieni",
+    "tickets": "Biļetes",
+    "map": "Karte",
+    "routes": "Maršruti",
+    "stops": "Pieturas",
+    "profile": "Profils",
+    "login": "Pieslēgties"
+  },
+  "common": {
+    "loading": "Ielādē...",
+    "error": "Radās kļūda. Lūdzu, mēģini vēlreiz.",
+    "not_found": "Lapa nav atrasta",
+    "back_home": "Atpakaļ uz sākumu"
+  },
+  "home": {
+    "welcome": "Laipni lūgti MyTrain!",
+    "welcome_sub": "Izvēlies savu ceļojumu un dodies ceļā.",
+    "popular_routes": "Populārie maršruti"
+  },
+  "trains": {
+    "title": "Atrast vilcienu",
+    "from": "No",
+    "to": "Uz",
+    "search": "Meklēt",
+    "validation": "Lūdzu, izvēlies abas stacijas.",
+    "results": "Meklēšanas rezultāti",
+    "no_results": "Šajā datumā vilcieni nav atrasti.",
+    "no_price": "Nav cenas",
+    "buy": "Pirkt biļeti"
+  },
+  "tickets": {
+    "title": "Manas biļetes",
+    "empty": "Tev vēl nav biļešu.",
+    "code": "Biļetes kods",
+    "departure": "Atiešana",
+    "price": "Cena",
+    "pay": "Maksāt",
+    "cancel": "Atcelt",
+    "refund": "Atmaksāt",
+    "confirm_cancel": "Atcelt šo biļeti?",
+    "confirm_refund": "Atmaksāt šo biļeti?",
+    "status": {
+      "pending": "Gaida apmaksu",
+      "paid": "Apmaksāta",
+      "cancelled": "Atcelta"
+    }
+  },
+  "payment": {
+    "choose_method": "Izvēlies maksājuma veidu",
+    "card": "Kredītkarte",
+    "bank": "Swedbank",
+    "paypal": "PayPal",
+    "provider_title": "Testa maksājumu sistēma",
+    "provider_note": "Šī ir testa sistēma. Īsta nauda netiek iekasēta.",
+    "confirm": "Apstiprināt maksājumu",
+    "cancel": "Atcelt",
+    "success_title": "Maksājums veiksmīgs!",
+    "success_text": "Tava biļete ir apmaksāta un aktīva.",
+    "failed_title": "Maksājums atcelts",
+    "failed_text": "Biļete joprojām nav apmaksāta. To var apmaksāt vēlāk.",
+    "to_tickets": "Uz manām biļetēm"
+  },
+  "auth": {
+    "login": "Pieslēgties",
+    "register": "Reģistrēties",
+    "name": "Vārds",
+    "email": "E-pasts",
+    "password": "Parole",
+    "new_password": "Jaunā parole",
+    "confirm_password": "Apstiprini paroli",
+    "no_account": "Vēl nav konta?",
+    "have_account": "Jau ir konts?",
+    "forgot_password": "Aizmirsi paroli?",
+    "forgot_title": "Aizmirsta parole",
+    "send_link": "Sūtīt atjaunošanas saiti",
+    "link_sent": "Ja šis e-pasts ir reģistrēts, atjaunošanas saite ir nosūtīta.",
+    "reset_title": "Paroles maiņa",
+    "reset_button": "Mainīt paroli",
+    "reset_success": "Parole nomainīta. Tagad vari pieslēgties.",
+    "back_to_login": "Atpakaļ uz pieslēgšanos",
+    "fill_all": "Lūdzu, aizpildi visus laukus.",
+    "passwords_differ": "Paroles nesakrīt.",
+    "email_verified_title": "E-pasts apstiprināts",
+    "email_verified_text": "Tava e-pasta adrese ir apstiprināta."
+  },
+  "profile": {
+    "title": "Profils",
+    "language": "Valoda",
+    "not_verified": "Tavs e-pasts vēl nav apstiprināts.",
+    "resend": "Sūtīt apstiprinājuma e-pastu vēlreiz",
+    "resend_sent": "Apstiprinājuma e-pasts nosūtīts.",
+    "verified": "E-pasts apstiprināts",
+    "logout": "Iziet"
+  },
+  "routes": {
+    "title": "Maršruti",
+    "empty": "Maršruti nav atrasti.",
+    "agency": "Pārvadātājs"
+  },
+  "stops": {
+    "title": "Stacijas",
+    "empty": "Stacijas nav atrastas.",
+    "coordinates": "Koordinātas"
+  },
+  "map": {
+    "title": "Vilcienu karte",
+    "subtitle": "Vilcienu atrašanās vieta atjaunojas automātiski."
+  }
+}

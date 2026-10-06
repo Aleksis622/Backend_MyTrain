@@ -1,15 +1,19 @@
-import { useParams } from "react-router-dom";
-import "./Payment.css";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import "../styles/payment.css";
 
 function PaymentFailed() {
-  const { paymentId } = useParams();
+  const { t } = useTranslation();
 
   return (
-    <div className="payment-failed">
-      <h1>Payment Failed</h1>
-      <p>Payment #{paymentId} was cancelled.</p>
-      <p>Your ticket remains unpaid.</p>
-    </div>
+    <main className="page page-narrow payment-page">
+      <h1>{t("payment.failed_title")}</h1>
+      <p>{t("payment.failed_text")}</p>
+
+      <Link className="btn" to="/tickets">
+        {t("payment.to_tickets")}
+      </Link>
+    </main>
   );
 }
 

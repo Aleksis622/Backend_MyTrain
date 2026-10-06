@@ -1,10 +1,13 @@
 import api from "./api";
 
-export const createPayment = (ticketId, provider) =>
+export const all = () => api.get("/payments");
+
+export const one = (paymentId) => api.get(`/payments/${paymentId}`);
+
+// Starts a pending payment for a ticket (re-uses an existing pending one).
+export const create = (ticketId, provider) =>
   api.post("/payments", { ticket_id: ticketId, provider });
 
-export const confirmPayment = (paymentId) =>
-  api.post(`/payments/${paymentId}/confirm`);
+export const confirm = (paymentId) => api.post(`/payments/${paymentId}/confirm`);
 
-export const getPayment = (paymentId) =>
-  api.get(`/payments/${paymentId}`);
+export const refund = (paymentId) => api.post(`/payments/${paymentId}/refund`);

@@ -1,63 +1,66 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import "./Navbar.css";
+import { useAuth } from "../context/Auth";
+import { changeLanguage } from "../api/auth";
+import { LANGUAGES } from "../lang";
+import "../styles/navbar.css";
+
+const LINKS = [
+  { to: "/", label: "navigation.home" },
+  { to: "/trains", label: "navigation.trains" },
+  { to: "/tickets", label: "navigation.tickets" },
+  { to: "/map", label: "navigation.map" },
+  { to: "/routes", label: "navigation.routes" },
+  { to: "/stops", label: "navigation.stops" },
+];
 
 function Navbar() {
   const { t, i18n } = useTranslation();
-  const location = useLocation();
+  const { user } = useAuth();
 
-  const changeLang = (lang) => {
+  const switchLanguage = (lang) => {
     i18n.changeLanguage(lang);
-    localStorage.setItem("lang", lang);
-  };
 
-  const isActive = (path) => {
-    return location.pathname === path ? "active" : "";
+    // Also save it on the account, so backend emails use the same language.
+    if (user) {
+      changeLanguage(lang).catch(() => {});
+    }
   };
 
   return (
     <nav className="nav">
-      <div className="logo">MyTrain</div>
+      <Link to="/" className="nav-logo">
+        MyTrain
+      </Link>
 
-      <ul className="links">
-        <li className={isActive("/")}>
-          <Link to="/">{t("navigation.home")}</Link>
-        </li>
+      <ul className="nav-links">
+        {LINKS.map(({ to, label }) => (
+          <li key={to}>
+            <NavLink to={to} end={to === "/"}>
+              {t(label)}
+            </NavLink>
+          </li>
+        ))}
 
-        <li className={isActive("/tickets")}>
-          <Link to="/tickets">{t("navigation.tickets")}</Link>
-        </li>
-
-        <li className={isActive("/map")}>
-          <Link to="/map">{t("navigation.map")}</Link>
-        </li>
-
-        <li className={isActive("/profile")}>
-          <Link to="/profile">{t("navigation.profile")}</Link>
+        <li>
+          {user ? (
+            <NavLink to="/profile">{t("navigation.profile")}</NavLink>
+          ) : (
+            <NavLink to="/login">{t("navigation.login")}</NavLink>
+          )}
         </li>
       </ul>
 
       <div className="lang-switch">
-        <button
-          className={i18n.language === "lv" ? "active-lang" : ""}
-          onClick={() => changeLang("lv")}
-        >
-          LV
-        </button>
-
-        <button
-          className={i18n.language === "en" ? "active-lang" : ""}
-          onClick={() => changeLang("en")}
-        >
-          EN
-        </button>
-
-        <button
-          className={i18n.language === "ru" ? "active-lang" : ""}
-          onClick={() => changeLang("ru")}
-        >
-          RU
-        </button>
+        {LANGUAGES.map((lang) => (
+          <button
+            key={lang}
+            className={i18n.language === lang ? "active" : ""}
+            onClick={() => switchLanguage(lang)}
+          >
+            {lang.toUpperCase()}
+          </button>
+        ))}
       </div>
     </nav>
   );

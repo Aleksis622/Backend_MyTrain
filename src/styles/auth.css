@@ -1,0 +1,17 @@
+/* Login, register, password reset and email verification pages. */
+
+.auth-page {
+  text-align: center;
+}
+
+.auth-page .form {
+  margin-top: 16px;
+  text-align: left;
+}
+
+.auth-links {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

@@ -1,0 +1,29 @@
+/* Payment method choice, fake provider and result pages. */
+
+.payment-page {
+  text-align: center;
+}
+
+.payment-summary {
+  margin: 16px 0 24px;
+  text-align: left;
+}
+
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.payment-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.payment-amount {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 8px 0;
+}
