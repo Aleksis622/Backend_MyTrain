@@ -10,7 +10,7 @@ function PaymentSuccess() {
       <h1>{t("payment.success_title")}</h1>
       <p>{t("payment.success_text")}</p>
 
-      <Link className="btn" to="/tickets">
+      <Link className="btn" to="/profile/tickets">
         {t("payment.to_tickets")}
       </Link>
     </main>

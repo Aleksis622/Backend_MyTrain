@@ -19,3 +19,8 @@
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
   cursor: pointer;
 }
+
+/* Train waiting at a station */
+.train-marker.at-station {
+  background: #2e7d32;
+}

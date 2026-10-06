@@ -1,35 +1,16 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import * as mapApi from "../api/map";
-import { createEcho } from "../api/echo";
+import { formatTime } from "../utils/format";
 import "../styles/map.css";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 const RIGA = [24.1, 56.95];
-
-// A DB row and a broadcast payload both look like a TrainPosition; make the coordinates numbers.
-function normalizePosition(raw) {
-  const position = raw?.position ?? raw;
-  const lng = Number(position?.longitude);
-  const lat = Number(position?.latitude);
-
-  if (!Number.isFinite(lng) || !Number.isFinite(lat)) return null;
-
-  return { ...position, longitude: lng, latitude: lat };
-}
-
-// Built with DOM nodes (not an HTML string) so train names can't inject HTML.
-function popupContent(position) {
-  const el = document.createElement("div");
-  const title = document.createElement("strong");
-  title.textContent = position.train?.name || `Train ${position.train_id}`;
-
-  el.append(title, document.createElement("br"), `${position.speed ?? 0} km/h`);
-  return el;
-}
+const REFRESH_MS = 15000;
+const ROUTE_LAYER = "selected-route";
 
 // Slides a marker to its new position over ~0.5 s instead of jumping.
 function animateMarker(marker, [endLng, endLat], isDisposed) {
@@ -52,13 +33,19 @@ function animateMarker(marker, [endLng, endLat], isDisposed) {
 function TrainMap() {
   const { t } = useTranslation();
   const containerRef = useRef(null);
+  const [trainCount, setTrainCount] = useState(null);
+
+  
+  const tRef = useRef(t);
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
 
   useEffect(() => {
     let disposed = false;
     const isDisposed = () => disposed;
-    const markers = {};
-    const drawnTrips = new Set();
-    let echo = null;
+    const markers = {}; 
+    let timer = null;
 
     const map = new mapboxgl.Map({
       container: containerRef.current,
@@ -68,43 +55,47 @@ function TrainMap() {
     });
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
-    const showTrain = (position) => {
-      const id = position.train_id;
-      const lngLat = [position.longitude, position.latitude];
-
-      if (markers[id]) {
-        markers[id].getPopup()?.setDOMContent(popupContent(position));
-        animateMarker(markers[id], lngLat, isDisposed);
-        return;
-      }
-
+   
+    const popupContent = (train) => {
+      const tr = tRef.current;
       const el = document.createElement("div");
-      el.className = "train-marker";
+      const title = document.createElement("strong");
+      title.textContent = train.route_name || train.headsign || train.trip_id;
 
-      markers[id] = new mapboxgl.Marker(el)
-        .setLngLat(lngLat)
-        .setPopup(new mapboxgl.Popup({ offset: 14 }).setDOMContent(popupContent(position)))
-        .addTo(map);
+      const status =
+        train.status === "at_station"
+          ? tr("map.at_station", { station: train.current_stop })
+          : tr("map.between", { from: train.previous_stop, to: train.next_stop });
+
+      el.append(title, document.createElement("br"), status);
+
+      if (train.next_stop) {
+        const next = tr("map.next_stop", {
+          station: train.next_stop,
+          time: formatTime(train.next_arrival),
+        });
+        el.append(document.createElement("br"), next);
+      }
+      return el;
     };
 
-    // Draws the line of a trip's stations once. A failure here never blocks the markers.
-    const drawRoute = async (tripId) => {
-      if (!tripId || drawnTrips.has(tripId)) return;
-      drawnTrips.add(tripId);
-
+    
+    const showRoute = async (tripId) => {
       try {
         const { data: coordinates } = await mapApi.route(tripId);
         if (disposed || !Array.isArray(coordinates) || coordinates.length < 2) return;
 
-        const sourceId = `route-${tripId}`;
-        map.addSource(sourceId, {
+        if (map.getLayer(ROUTE_LAYER)) map.removeLayer(ROUTE_LAYER);
+        if (map.getSource(ROUTE_LAYER)) map.removeSource(ROUTE_LAYER);
+
+        map.addSource(ROUTE_LAYER, {
           type: "geojson",
           data: { type: "Feature", geometry: { type: "LineString", coordinates } },
         });
         map.addLayer({
-          id: `${sourceId}-line`,
+          id: ROUTE_LAYER,
           type: "line",
-          source: sourceId,
+          source: ROUTE_LAYER,
           layout: { "line-cap": "round", "line-join": "round" },
           paint: { "line-color": "#0b63ce", "line-width": 4 },
         });
@@ -113,39 +104,59 @@ function TrainMap() {
       }
     };
 
-    const handlePosition = (raw) => {
-      const position = normalizePosition(raw);
-      if (!position) return;
+    const showTrain = (train) => {
+      const lngLat = [Number(train.longitude), Number(train.latitude)];
+      const existing = markers[train.trip_id];
 
-      showTrain(position);
-      drawRoute(position.trip_id);
+      if (existing) {
+        existing.getElement().classList.toggle("at-station", train.status === "at_station");
+        existing.getPopup().setDOMContent(popupContent(train));
+        animateMarker(existing, lngLat, isDisposed);
+        return;
+      }
+
+      const el = document.createElement("div");
+      el.className = "train-marker";
+      el.classList.toggle("at-station", train.status === "at_station");
+      el.addEventListener("click", () => showRoute(train.trip_id));
+
+      markers[train.trip_id] = new mapboxgl.Marker(el)
+        .setLngLat(lngLat)
+        .setPopup(new mapboxgl.Popup({ offset: 14 }).setDOMContent(popupContent(train)))
+        .addTo(map);
     };
 
-    map.on("load", async () => {
-      // 1. Last known position of every train.
+    const refresh = async () => {
       try {
-        const { data } = await mapApi.trains();
-        if (!disposed && Array.isArray(data)) data.forEach(handlePosition);
+        const { data: trains } = await mapApi.trains();
+        if (disposed || !Array.isArray(trains)) return;
+
+        trains.forEach(showTrain);
+
+       
+        const running = new Set(trains.map((train) => train.trip_id));
+        Object.keys(markers).forEach((tripId) => {
+          if (!running.has(tripId)) {
+            markers[tripId].remove();
+            delete markers[tripId];
+          }
+        });
+
+        setTrainCount(trains.length);
       } catch (err) {
         console.error("[map] failed to load /map/trains", err);
       }
+    };
 
-      // 2. Live updates over WebSocket. The leading dot matches broadcastAs() in the backend event.
+    map.on("load", () => {
       if (disposed) return;
-      try {
-        echo = createEcho();
-        echo.channel("map-trains").listen(".TrainPositionUpdated", handlePosition);
-      } catch (err) {
-        console.error("[map] Reverb subscription failed", err);
-      }
+      refresh();
+      timer = setInterval(refresh, REFRESH_MS);
     });
 
     return () => {
       disposed = true;
-      if (echo) {
-        echo.leave("map-trains");
-        echo.disconnect();
-      }
+      clearInterval(timer);
       map.remove();
     };
   }, []);
@@ -153,7 +164,10 @@ function TrainMap() {
   return (
     <main className="page">
       <h1>{t("map.title")}</h1>
-      <p className="muted">{t("map.subtitle")}</p>
+      <p className="muted">
+        {trainCount !== null && <strong>{t("map.running", { count: trainCount })}. </strong>}
+        {t("map.subtitle")}
+      </p>
       <div ref={containerRef} className="map-container" />
     </main>
   );

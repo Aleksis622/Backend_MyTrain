@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { all as getTickets, cancel as cancelTicket } from "../api/tickets";
-import { refund as refundPayment } from "../api/payments";
-import { getErrorMessage, listFrom } from "../api/api";
-import { formatDateTime, formatPrice } from "../utils/format";
+import { all as getTickets, cancel as cancelTicket } from "../../api/tickets";
+import { refund as refundPayment } from "../../api/payments";
+import { getErrorMessage, listFrom } from "../../api/api";
+import { formatDateTime, formatPrice } from "../../utils/format";
+
 
 function Tickets() {
   const { t, i18n } = useTranslation();
@@ -25,7 +26,7 @@ function Tickets() {
     loadTickets();
   }, [loadTickets]);
 
-  // Runs a cancel/refund after the user confirms, then reloads the list.
+  
   const runAction = async (confirmText, action) => {
     if (!window.confirm(confirmText)) return;
 
@@ -39,13 +40,11 @@ function Tickets() {
   };
 
   if (loading) {
-    return <main className="page">{t("common.loading")}</main>;
+    return <p>{t("common.loading")}</p>;
   }
 
   return (
-    <main className="page">
-      <h1>{t("tickets.title")}</h1>
-
+    <section>
       {error && <p className="alert alert-error">{error}</p>}
       {tickets.length === 0 && <p className="muted">{t("tickets.empty")}</p>}
 
@@ -102,7 +101,7 @@ function Tickets() {
           );
         })}
       </div>
-    </main>
+    </section>
   );
 }
 

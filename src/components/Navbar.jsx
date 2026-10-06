@@ -7,8 +7,6 @@ import "../styles/navbar.css";
 
 const LINKS = [
   { to: "/", label: "navigation.home" },
-  { to: "/trains", label: "navigation.trains" },
-  { to: "/tickets", label: "navigation.tickets" },
   { to: "/map", label: "navigation.map" },
   { to: "/routes", label: "navigation.routes" },
   { to: "/stops", label: "navigation.stops" },

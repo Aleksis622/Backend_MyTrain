@@ -1,8 +1,6 @@
 {
   "navigation": {
     "home": "Home",
-    "trains": "Trains",
-    "tickets": "Tickets",
     "map": "Map",
     "routes": "Routes",
     "stops": "Stops",
@@ -21,7 +19,6 @@
     "popular_routes": "Popular routes"
   },
   "trains": {
-    "title": "Find a train",
     "from": "From",
     "to": "To",
     "search": "Search",
@@ -29,7 +26,16 @@
     "results": "Search results",
     "no_results": "No trains found for this date.",
     "no_price": "No fare",
-    "buy": "Buy ticket"
+    "buy": "Buy ticket",
+    "date": "Date",
+    "depart_after": "Depart after",
+    "sort_by": "Sort by",
+    "sort_departure": "Departure time",
+    "sort_duration": "Travel time",
+    "sort_price": "Price",
+    "only_buyable": "Only trains with a ticket price",
+    "swap": "Swap stations",
+    "duration": "{{minutes}} min"
   },
   "tickets": {
     "title": "My tickets",
@@ -93,7 +99,8 @@
     "resend": "Resend verification email",
     "resend_sent": "Verification email sent.",
     "verified": "Email verified",
-    "logout": "Logout"
+    "logout": "Logout",
+    "tab_account": "Account"
   },
   "routes": {
     "title": "Routes",
@@ -106,7 +113,12 @@
     "coordinates": "Coordinates"
   },
   "map": {
-    "title": "Live train map",
-    "subtitle": "Train positions update automatically."
+    "title": "Train map",
+    "subtitle": "Positions are estimated from the timetable and refresh every 15 seconds. Click a train to see its route.",
+    "running_one": "{{count}} train running now",
+    "running_other": "{{count}} trains running now",
+    "at_station": "At {{station}} station",
+    "between": "Between {{from}} and {{to}}",
+    "next_stop": "Next: {{station}} at {{time}}"
   }
 }

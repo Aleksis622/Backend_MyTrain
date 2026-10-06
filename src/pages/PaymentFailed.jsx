@@ -10,7 +10,7 @@ function PaymentFailed() {
       <h1>{t("payment.failed_title")}</h1>
       <p>{t("payment.failed_text")}</p>
 
-      <Link className="btn" to="/tickets">
+      <Link className="btn" to="/profile/tickets">
         {t("payment.to_tickets")}
       </Link>
     </main>

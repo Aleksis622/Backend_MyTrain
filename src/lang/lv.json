@@ -1,8 +1,6 @@
 {
   "navigation": {
     "home": "Sākums",
-    "trains": "Vilcieni",
-    "tickets": "Biļetes",
     "map": "Karte",
     "routes": "Maršruti",
     "stops": "Pieturas",
@@ -21,7 +19,6 @@
     "popular_routes": "Populārie maršruti"
   },
   "trains": {
-    "title": "Atrast vilcienu",
     "from": "No",
     "to": "Uz",
     "search": "Meklēt",
@@ -29,7 +26,16 @@
     "results": "Meklēšanas rezultāti",
     "no_results": "Šajā datumā vilcieni nav atrasti.",
     "no_price": "Nav cenas",
-    "buy": "Pirkt biļeti"
+    "buy": "Pirkt biļeti",
+    "date": "Datums",
+    "depart_after": "Atiešana pēc",
+    "sort_by": "Kārtot pēc",
+    "sort_departure": "Atiešanas laika",
+    "sort_duration": "Ceļā pavadītā laika",
+    "sort_price": "Cenas",
+    "only_buyable": "Tikai vilcieni ar biļetes cenu",
+    "swap": "Samainīt stacijas",
+    "duration": "{{minutes}} min"
   },
   "tickets": {
     "title": "Manas biļetes",
@@ -93,7 +99,8 @@
     "resend": "Sūtīt apstiprinājuma e-pastu vēlreiz",
     "resend_sent": "Apstiprinājuma e-pasts nosūtīts.",
     "verified": "E-pasts apstiprināts",
-    "logout": "Iziet"
+    "logout": "Iziet",
+    "tab_account": "Konts"
   },
   "routes": {
     "title": "Maršruti",
@@ -107,6 +114,12 @@
   },
   "map": {
     "title": "Vilcienu karte",
-    "subtitle": "Vilcienu atrašanās vieta atjaunojas automātiski."
+    "subtitle": "Atrašanās vieta aprēķināta pēc saraksta un atjaunojas ik pēc 15 sekundēm. Uzklikšķini uz vilciena, lai redzētu tā maršrutu.",
+    "running_zero": "Pašlaik kursē {{count}} vilcienu",
+    "running_one": "Pašlaik kursē {{count}} vilciens",
+    "running_other": "Pašlaik kursē {{count}} vilcieni",
+    "at_station": "Stacijā {{station}}",
+    "between": "Starp {{from}} un {{to}}",
+    "next_stop": "Nākamā: {{station}} plkst. {{time}}"
   }
 }

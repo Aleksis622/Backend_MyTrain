@@ -23,3 +23,9 @@ export function formatDateTime(isoString, lang) {
 export function formatPrice(amount, currency = "EUR") {
   return `${Number(amount).toFixed(2)} ${currency}`;
 }
+
+// GTFS time "08:15:00" -> 495 minutes since midnight. "25:10:00" -> 1510, so past-midnight times still sort last.
+export function toMinutes(gtfsTime) {
+  const [hours, minutes] = gtfsTime.split(":").map(Number);
+  return hours * 60 + minutes;
+}
