@@ -6,8 +6,7 @@ import Footer from "./components/Footer";
 import RequireAuth from "./components/RequireAuth";
 
 import Home from "./pages/Home";
-import RoutesPage from "./pages/Routes";
-import Stops from "./pages/Stops";
+import Departures from "./pages/Departures";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -46,8 +45,7 @@ function App() {
               </Suspense>
             }
           />
-          <Route path="/routes" element={<RoutesPage />} />
-          <Route path="/stops" element={<Stops />} />
+          <Route path="/departures/:stopId?" element={<Departures />} />
 
           
           <Route path="/login" element={<Login />} />
@@ -65,6 +63,8 @@ function App() {
           
           <Route path="/trains" element={<Navigate to="/" replace />} />
           <Route path="/tickets" element={<Navigate to="/profile/tickets" replace />} />
+          <Route path="/stops" element={<Navigate to="/departures" replace />} />
+          <Route path="/routes" element={<Navigate to="/map" replace />} />
 
           {/* Payments */}
           <Route path="/payment/:ticketId" element={loggedIn(<Payment />)} />

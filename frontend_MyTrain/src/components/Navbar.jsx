@@ -8,8 +8,6 @@ import "../styles/navbar.css";
 const LINKS = [
   { to: "/", label: "navigation.home" },
   { to: "/map", label: "navigation.map" },
-  { to: "/routes", label: "navigation.routes" },
-  { to: "/stops", label: "navigation.stops" },
 ];
 
 function Navbar() {
