@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import StationInput from "./StationInput";
 import { useAuth } from "../context/Auth";
 import { searchTrains } from "../api/search";
 import { create as createTicket } from "../api/tickets";
 import { getErrorMessage } from "../api/api";
-import { formatPrice, formatTime, toMinutes, today } from "../utils/format";
+import { ExpectedTime, TrainStatusBadge } from "./TrainStatus";
+import { formatPrice, toMinutes, today } from "../utils/format";
+import { readSearchLink } from "../utils/searchLink";
 import "../styles/trains.css";
 
 const duration = (trip) => toMinutes(trip.arrival_time) - toMinutes(trip.departure_time);
@@ -20,25 +22,35 @@ const SORTERS = {
 
 
 function TrainSearch() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [fromText, setFromText] = useState("");
-  const [toText, setToText] = useState("");
-  const [fromStation, setFromStation] = useState(null);
-  const [toStation, setToStation] = useState(null);
+  // Stations/date/time can come from a link, e.g. a station popup on the map (see utils/searchLink.js).
+  const [searchParams] = useSearchParams();
+  const [initial] = useState(() => readSearchLink(searchParams));
 
- 
-  const [date, setDate] = useState(today());
-  const [time, setTime] = useState("");
+  const [fromText, setFromText] = useState(initial.from?.stop_name ?? "");
+  const [toText, setToText] = useState(initial.to?.stop_name ?? "");
+  const [fromStation, setFromStation] = useState(initial.from);
+  const [toStation, setToStation] = useState(initial.to);
+
+  const [date, setDate] = useState(initial.date && initial.date >= today() ? initial.date : today());
+  const [time, setTime] = useState(initial.time ?? "");
+
+  // A link with both stations (e.g. from the departure board) searches straight away.
+  const [autoSearch] = useState(() =>
+    initial.from && initial.to
+      ? { from: initial.from.stop_id, to: initial.to.stop_id, date, time }
+      : null,
+  );
   const [sortBy, setSortBy] = useState("departure");
   const [onlyWithPrice, setOnlyWithPrice] = useState(false);
 
   const [results, setResults] = useState(null); // null = not searched yet
   const [searchedDate, setSearchedDate] = useState(date);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(autoSearch !== null);
   const [error, setError] = useState("");
 
   const swapStations = () => {
@@ -48,31 +60,41 @@ function TrainSearch() {
     setToStation(fromStation);
   };
 
-  const handleSearch = async (e) => {
+  // i18n.t (not t) keeps this function stable, so a language switch doesn't repeat the search.
+  const loadResults = useCallback(
+    (params) =>
+      searchTrains(params)
+        .then((res) => {
+          setResults(res.data);
+          setSearchedDate(params.date);
+        })
+        .catch((err) => setError(getErrorMessage(err, i18n.t("common.error"))))
+        .finally(() => setLoading(false)),
+    [i18n],
+  );
+
+  useEffect(() => {
+    if (autoSearch) loadResults(autoSearch);
+  }, [autoSearch, loadResults]);
+
+  const handleSearch = (e) => {
     e.preventDefault();
-    setError("");
 
     if (!fromText.trim() || !toText.trim()) {
       setError(t("trains.validation"));
       return;
     }
 
+    setError("");
     setLoading(true);
-    try {
-      // A picked suggestion is exact (stop_id); typed text matches by name.
-      const res = await searchTrains({
-        from: fromStation?.stop_id ?? fromText.trim(),
-        to: toStation?.stop_id ?? toText.trim(),
-        date,
-        time,
-      });
-      setResults(res.data);
-      setSearchedDate(date);
-    } catch (err) {
-      setError(getErrorMessage(err, t("common.error")));
-    } finally {
-      setLoading(false);
-    }
+
+    // A picked suggestion is exact (stop_id); typed text matches by name.
+    loadResults({
+      from: fromStation?.stop_id ?? fromText.trim(),
+      to: toStation?.stop_id ?? toText.trim(),
+      date,
+      time,
+    });
   };
 
   const handleBuy = async (trip) => {
@@ -162,35 +184,45 @@ function TrainSearch() {
           {shownResults.length === 0 && <p className="muted">{t("trains.no_results")}</p>}
 
           <div className="card-list">
-            {shownResults.map((trip) => (
-              <div key={`${trip.trip_id}-${trip.from_stop_id}`} className="card train-result">
-                <div>
-                  <div className="train-times">
-                    {formatTime(trip.departure_time)} → {formatTime(trip.arrival_time)}
-                  </div>
-                  <div className="train-stations">
-                    {trip.from_station} → {trip.to_station}
-                  </div>
-                  <div className="muted">
-                    {t("trains.duration", { minutes: duration(trip) })} ·{" "}
-                    {trip.route_long_name || trip.trip_headsign}
-                  </div>
-                </div>
+            {shownResults.map((trip) => {
+              const cancelled = trip.status === "cancelled";
+              const delay = Number(trip.delay_minutes);
 
-                <div className="train-buy">
-                  <div className="train-price">
-                    {trip.price !== null ? formatPrice(trip.price, trip.currency) : t("trains.no_price")}
+              return (
+                <div
+                  key={`${trip.trip_id}-${trip.from_stop_id}`}
+                  className={`card train-result${cancelled ? " is-cancelled" : ""}`}
+                >
+                  <div>
+                    <div className="train-times">
+                      <ExpectedTime time={trip.departure_time} status={trip.status} delay={delay} /> →{" "}
+                      <ExpectedTime time={trip.arrival_time} status={trip.status} delay={delay} />
+                    </div>
+                    <div className="train-stations">
+                      {trip.from_station} → {trip.to_station}
+                    </div>
+                    <TrainStatusBadge status={trip.status} delay={delay} reason={trip.status_reason} />
+                    <div className="muted">
+                      {t("trains.duration", { minutes: duration(trip) })} ·{" "}
+                      {trip.route_long_name || trip.trip_headsign}
+                    </div>
                   </div>
-                  <button
-                    className="btn"
-                    disabled={trip.price === null}
-                    onClick={() => handleBuy(trip)}
-                  >
-                    {t("trains.buy")}
-                  </button>
+
+                  <div className="train-buy">
+                    <div className="train-price">
+                      {trip.price !== null ? formatPrice(trip.price, trip.currency) : t("trains.no_price")}
+                    </div>
+                    <button
+                      className="btn"
+                      disabled={trip.price === null || cancelled}
+                      onClick={() => handleBuy(trip)}
+                    >
+                      {cancelled ? t("status.cancelled") : t("trains.buy")}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </>
       )}

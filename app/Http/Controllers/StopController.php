@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Stop;
-use App\Models\StopTime;
+use App\Services\TrainSearchService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class StopController extends Controller
@@ -36,17 +37,27 @@ class StopController extends Controller
         return Stop::with(['originJourneys.train', 'destinationJourneys.train'])->findOrFail($stop_id);
     }
 
-    public function stopTimes(string $stop_id): JsonResponse
+    /**
+     * GET /stops/{stop_id}/departures?date=2026-10-07&after=08:00&limit=20
+     * Without "date" it shows today's trains from now on; with a future date, from 00:00.
+     */
+    public function departures(Request $request, string $stop_id, TrainSearchService $trains): JsonResponse
     {
-        $times = StopTime::with(['trip.route'])
-            ->where('stop_id', $stop_id)
-            ->orderBy('departure_time')
-            ->get();
+        $data = $request->validate([
+            'date' => 'nullable|date_format:Y-m-d',
+            'after' => 'nullable|date_format:H:i',
+            'limit' => 'nullable|integer|min:1|max:50',
+        ]);
 
-        if ($times->isEmpty()) {
-            return response()->json(['error' => 'No stop times found for this stop'], 404);
-        }
+        $stop = Stop::findOrFail($stop_id, ['stop_id', 'stop_name', 'stop_lat', 'stop_lon']);
+        $date = Carbon::parse($data['date'] ?? today());
+        $after = $data['after'] ?? ($date->isToday() ? now()->format('H:i') : null);
 
-        return response()->json($times);
+        return response()->json([
+            'stop' => $stop,
+            'date' => $date->toDateString(),
+            'after' => $after,
+            'departures' => $trains->departures($stop->stop_id, $date, $after, $data['limit'] ?? 20),
+        ]);
     }
 }

@@ -73,4 +73,61 @@ class TrainSearchTest extends TestCase
             ->assertOk()
             ->assertJsonCount(0);
     }
+
+    public function test_departure_board_lists_trains_with_final_destination(): void
+    {
+        $date = now()->addDay()->toDateString();
+
+        $this->getJson("/api/stops/S1/departures?date={$date}")
+            ->assertOk()
+            ->assertJsonPath('stop.stop_name', 'Riga')
+            ->assertJsonPath('after', null)
+            ->assertJsonCount(1, 'departures')
+            ->assertJsonPath('departures.0.trip_id', 'T1')
+            ->assertJsonPath('departures.0.departure_time', '08:00:00')
+            ->assertJsonPath('departures.0.destination_stop_id', 'S3')
+            ->assertJsonPath('departures.0.destination', 'Tukums');
+    }
+
+    public function test_departure_board_skips_trains_that_end_at_the_station(): void
+    {
+        $date = now()->addDay()->toDateString();
+
+        $this->getJson("/api/stops/S3/departures?date={$date}")
+            ->assertOk()
+            ->assertJsonCount(0, 'departures');
+    }
+
+    public function test_departure_board_respects_time_and_calendar(): void
+    {
+        $date = now()->addDays(3)->toDateString();
+
+        $this->getJson("/api/stops/S2/departures?date={$date}&after=08:31")
+            ->assertOk()
+            ->assertJsonCount(1, 'departures');
+
+        $this->getJson("/api/stops/S2/departures?date={$date}&after=08:32")
+            ->assertOk()
+            ->assertJsonCount(0, 'departures');
+
+        DB::table('calendar_dates')->insert(['service_id' => 'every_day', 'date' => $date, 'exception_type' => 2]);
+
+        $this->getJson("/api/stops/S1/departures?date={$date}")
+            ->assertOk()
+            ->assertJsonCount(0, 'departures');
+    }
+
+    public function test_departure_board_for_unknown_station_is_404(): void
+    {
+        $this->getJson('/api/stops/NOPE/departures')->assertNotFound();
+    }
+
+    public function test_map_stations_returns_every_station_with_numeric_coordinates(): void
+    {
+        $this->getJson('/api/map/stations')
+            ->assertOk()
+            ->assertJsonCount(3)
+            ->assertJsonPath('0.stop_name', 'Jurmala')
+            ->assertJsonPath('0.stop_lat', 56.968);
+    }
 }

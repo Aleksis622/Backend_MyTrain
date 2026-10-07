@@ -1,0 +1,78 @@
+.departures-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.departures-filters .station-input {
+  flex: 1 1 220px;
+}
+
+.departures-filters label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.departures-board {
+  padding: 0;
+  overflow-x: auto;
+}
+
+.departures-board table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.departures-board th,
+.departures-board td {
+  padding: 10px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.departures-board th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-muted);
+}
+
+.departures-board tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.departure-time {
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.departure-action {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.departures-more {
+  display: block;
+  margin: 12px auto;
+}
+
+@media (max-width: 600px) {
+  .hide-narrow {
+    display: none;
+  }
+}
+
+.departures-board tr.is-cancelled td {
+  opacity: 0.7;
+}
+
+.departures-board .train-status {
+  margin-top: 4px;
+}
