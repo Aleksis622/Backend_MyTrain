@@ -1,16 +1,52 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import * as mapApi from "../api/map";
-import { formatTime } from "../utils/format";
+import { TRAIN_ICON_PATH } from "../components/map/dom";
+import { createTrainMarkerElement, updateTrainMarkerElement } from "../components/map/trainMarker";
+import { stationPopup, trainPopup } from "../components/map/popups";
+import { addRouteLayers, clearRoute, fitRoute, showRoute } from "../components/map/routeLayer";
+import MapLegend from "../components/map/MapLegend";
 import "../styles/map.css";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 const RIGA = [24.1, 56.95];
 const REFRESH_MS = 15000;
-const ROUTE_LAYER = "selected-route";
+const STATION_SOURCE = "stations";
+const STATION_LAYER = "station-icons";
+const STATION_LABELS = "station-labels";
+const STATION_ICON = "station-icon";
+
+// Blue station sign with a white train, drawn at 2x for sharp screens.
+const STATION_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <rect x="2" y="2" width="36" height="36" rx="9" fill="#0b63ce" stroke="#ffffff" stroke-width="3"/>
+  <path transform="translate(8 8)" d="${TRAIN_ICON_PATH}" fill="#ffffff"/>
+</svg>`;
+
+function loadStationIcon(map) {
+  return new Promise((resolve, reject) => {
+    const image = new Image(40, 40);
+    image.onload = () => {
+      if (!map.hasImage(STATION_ICON)) map.addImage(STATION_ICON, image, { pixelRatio: 2 });
+      resolve();
+    };
+    image.onerror = reject;
+    image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(STATION_ICON_SVG)}`;
+  });
+}
+
+// Stations as GeoJSON points for a Mapbox source.
+const stationsToGeoJson = (stations) => ({
+  type: "FeatureCollection",
+  features: stations.map((station) => ({
+    type: "Feature",
+    geometry: { type: "Point", coordinates: [station.stop_lon, station.stop_lat] },
+    properties: { stop_id: station.stop_id, stop_name: station.stop_name },
+  })),
+});
 
 // Slides a marker to its new position over ~0.5 s instead of jumping.
 function animateMarker(marker, [endLng, endLat], isDisposed) {
@@ -32,20 +68,30 @@ function animateMarker(marker, [endLng, endLat], isDisposed) {
 
 function TrainMap() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const containerRef = useRef(null);
   const [trainCount, setTrainCount] = useState(null);
 
-  
+  // The map is created once, so its handlers read the latest t() / navigate() through refs.
   const tRef = useRef(t);
+  const navigateRef = useRef(navigate);
   useEffect(() => {
     tRef.current = t;
-  }, [t]);
+    navigateRef.current = navigate;
+  }, [t, navigate]);
 
   useEffect(() => {
     let disposed = false;
     const isDisposed = () => disposed;
-    const markers = {}; 
+    const markers = {}; // trip_id -> mapboxgl.Marker
+    const trains = {}; // trip_id -> latest position
     let timer = null;
+
+    // The train whose route is drawn: { tripId, stops } (stops is null while loading).
+    let selected = null;
+    // Only one popup at a time; closing it (× or a click on the map) clears the selection.
+    let popup = null;
+    let popupTripId = null;
 
     const map = new mapboxgl.Map({
       container: containerRef.current,
@@ -55,94 +101,163 @@ function TrainMap() {
     });
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
-   
-    const popupContent = (train) => {
-      const tr = tRef.current;
-      const el = document.createElement("div");
-      const title = document.createElement("strong");
-      title.textContent = train.route_name || train.headsign || train.trip_id;
+    const popupHelpers = () => ({ t: tRef.current, navigate: (path) => navigateRef.current(path) });
 
-      const status =
-        train.status === "at_station"
-          ? tr("map.at_station", { station: train.current_stop })
-          : tr("map.between", { from: train.previous_stop, to: train.next_stop });
+    const openPopup = (lngLat, content, { offset, tripId = null }) => {
+      const previous = popup;
+      const next = new mapboxgl.Popup({ offset, maxWidth: "320px", className: "map-popup" })
+        .setLngLat(lngLat)
+        .setDOMContent(content);
 
-      el.append(title, document.createElement("br"), status);
+      popup = next;
+      popupTripId = tripId;
+      next.on("close", () => {
+        if (popup !== next) return; // replaced by another popup, not closed by the user
+        popup = null;
+        popupTripId = null;
+        clearSelection();
+      });
 
-      if (train.next_stop) {
-        const next = tr("map.next_stop", {
-          station: train.next_stop,
-          time: formatTime(train.next_arrival),
-        });
-        el.append(document.createElement("br"), next);
-      }
-      return el;
+      previous?.remove();
+      next.addTo(map);
     };
 
-    
-    const showRoute = async (tripId) => {
+    const setSelectedMarker = (tripId) => {
+      Object.entries(markers).forEach(([id, marker]) =>
+        updateTrainMarkerElement(marker.getElement(), trains[id], id === tripId),
+      );
+    };
+
+    const clearSelection = () => {
+      selected = null;
+      clearRoute(map);
+      setSelectedMarker(null);
+    };
+
+    const selectTrain = async (tripId) => {
+      const train = trains[tripId];
+      if (!train) return;
+
+      openPopup([train.longitude, train.latitude], trainPopup(train, popupHelpers()), { offset: 24, tripId });
+
+      if (selected?.tripId === tripId) return;
+      selected = { tripId, stops: null };
+      setSelectedMarker(tripId);
+
       try {
-        const { data: coordinates } = await mapApi.route(tripId);
-        if (disposed || !Array.isArray(coordinates) || coordinates.length < 2) return;
+        const { data } = await mapApi.route(tripId);
+        if (disposed || selected?.tripId !== tripId) return;
 
-        if (map.getLayer(ROUTE_LAYER)) map.removeLayer(ROUTE_LAYER);
-        if (map.getSource(ROUTE_LAYER)) map.removeSource(ROUTE_LAYER);
-
-        map.addSource(ROUTE_LAYER, {
-          type: "geojson",
-          data: { type: "Feature", geometry: { type: "LineString", coordinates } },
-        });
-        map.addLayer({
-          id: ROUTE_LAYER,
-          type: "line",
-          source: ROUTE_LAYER,
-          layout: { "line-cap": "round", "line-join": "round" },
-          paint: { "line-color": "#0b63ce", "line-width": 4 },
-        });
+        selected.stops = data.stops;
+        showRoute(map, data.stops, trains[tripId]);
+        fitRoute(map, data.stops, mapboxgl);
       } catch (err) {
-        console.warn(`[map] could not draw route for trip ${tripId}`, err);
+        console.warn(`[map] could not load route for trip ${tripId}`, err);
       }
     };
 
     const showTrain = (train) => {
       const lngLat = [Number(train.longitude), Number(train.latitude)];
+      const isSelected = selected?.tripId === train.trip_id;
       const existing = markers[train.trip_id];
 
       if (existing) {
-        existing.getElement().classList.toggle("at-station", train.status === "at_station");
-        existing.getPopup().setDOMContent(popupContent(train));
+        updateTrainMarkerElement(existing.getElement(), train, isSelected);
         animateMarker(existing, lngLat, isDisposed);
         return;
       }
 
-      const el = document.createElement("div");
-      el.className = "train-marker";
-      el.classList.toggle("at-station", train.status === "at_station");
-      el.addEventListener("click", () => showRoute(train.trip_id));
+      const element = createTrainMarkerElement(train);
+      element.addEventListener("click", (e) => {
+        e.stopPropagation();
+        selectTrain(train.trip_id);
+      });
+      markers[train.trip_id] = new mapboxgl.Marker({ element }).setLngLat(lngLat).addTo(map);
+    };
 
-      markers[train.trip_id] = new mapboxgl.Marker(el)
-        .setLngLat(lngLat)
-        .setPopup(new mapboxgl.Popup({ offset: 14 }).setDOMContent(popupContent(train)))
-        .addTo(map);
+    const showStations = async () => {
+      try {
+        const [{ data: stations }] = await Promise.all([mapApi.stations(), loadStationIcon(map)]);
+        if (disposed || !Array.isArray(stations)) return;
+
+        map.addSource(STATION_SOURCE, { type: "geojson", data: stationsToGeoJson(stations) });
+        map.addLayer({
+          id: STATION_LAYER,
+          type: "symbol",
+          source: STATION_SOURCE,
+          layout: {
+            "icon-image": STATION_ICON,
+            "icon-size": ["interpolate", ["linear"], ["zoom"], 6, 0.55, 10, 0.9, 13, 1.1],
+            "icon-allow-overlap": true,
+          },
+        });
+        // Names only when zoomed in, otherwise they cover the whole country.
+        map.addLayer({
+          id: STATION_LABELS,
+          type: "symbol",
+          source: STATION_SOURCE,
+          minzoom: 10,
+          layout: {
+            "text-field": ["get", "stop_name"],
+            "text-size": 12,
+            "text-offset": [0, 1.3],
+            "text-anchor": "top",
+          },
+          paint: { "text-color": "#1f2328", "text-halo-color": "#ffffff", "text-halo-width": 1.5 },
+        });
+        // The route line goes under the station icons.
+        addRouteLayers(map, STATION_LAYER);
+
+        map.on("click", STATION_LAYER, (e) => {
+          const feature = e.features?.[0];
+          if (!feature) return;
+          openPopup(feature.geometry.coordinates, stationPopup(feature.properties, popupHelpers()), {
+            offset: 14,
+          });
+        });
+        map.on("mouseenter", STATION_LAYER, () => {
+          map.getCanvas().style.cursor = "pointer";
+        });
+        map.on("mouseleave", STATION_LAYER, () => {
+          map.getCanvas().style.cursor = "";
+        });
+      } catch (err) {
+        console.error("[map] failed to load stations", err);
+      }
     };
 
     const refresh = async () => {
       try {
-        const { data: trains } = await mapApi.trains();
-        if (disposed || !Array.isArray(trains)) return;
+        const { data } = await mapApi.trains();
+        if (disposed || !Array.isArray(data)) return;
 
-        trains.forEach(showTrain);
+        data.forEach((train) => {
+          trains[train.trip_id] = train;
+          showTrain(train);
+        });
 
-       
-        const running = new Set(trains.map((train) => train.trip_id));
+        // Remove trains that finished their trip.
+        const running = new Set(data.map((train) => train.trip_id));
         Object.keys(markers).forEach((tripId) => {
           if (!running.has(tripId)) {
             markers[tripId].remove();
             delete markers[tripId];
+            delete trains[tripId];
           }
         });
 
-        setTrainCount(trains.length);
+        // Keep the selected train's route and card in step with its new position.
+        if (selected && !running.has(selected.tripId)) {
+          popup?.remove();
+        } else if (selected) {
+          const train = trains[selected.tripId];
+          if (selected.stops) showRoute(map, selected.stops, train);
+          if (popupTripId === selected.tripId) {
+            popup.setLngLat([train.longitude, train.latitude]).setDOMContent(trainPopup(train, popupHelpers()));
+          }
+        }
+
+        setTrainCount(data.length);
       } catch (err) {
         console.error("[map] failed to load /map/trains", err);
       }
@@ -150,6 +265,7 @@ function TrainMap() {
 
     map.on("load", () => {
       if (disposed) return;
+      showStations();
       refresh();
       timer = setInterval(refresh, REFRESH_MS);
     });
@@ -168,7 +284,10 @@ function TrainMap() {
         {trainCount !== null && <strong>{t("map.running", { count: trainCount })}. </strong>}
         {t("map.subtitle")}
       </p>
-      <div ref={containerRef} className="map-container" />
+      <div className="map-wrapper">
+        <div ref={containerRef} className="map-container" />
+        <MapLegend />
+      </div>
     </main>
   );
 }

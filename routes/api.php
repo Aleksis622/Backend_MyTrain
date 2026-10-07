@@ -31,8 +31,6 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 've
     ->middleware('signed')
     ->name('verification.verify');
 
-
-
 Route::middleware(['auth:sanctum', 'lang'])->group(function () {
     Route::get('/user', fn (Request $request) => $request->user());
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -51,15 +49,13 @@ Route::middleware(['auth:sanctum', 'lang'])->group(function () {
     Route::post('/payments/{payment}/refund', [PaymentController::class, 'refund']);
 });
 
-
-
 Route::middleware('lang')->group(function () {
     Route::get('/search-trains', [TrainController::class, 'search']);
     Route::get('/popular-routes', [TrainController::class, 'popular']);
 
     Route::get('/stops', [StopController::class, 'index']);
     Route::get('/stops/{stop_id}', [StopController::class, 'show']);
-    Route::get('/stops/{stop_id}/times', [StopController::class, 'stopTimes']);
+    Route::get('/stops/{stop_id}/departures', [StopController::class, 'departures']);
 
     Route::get('/agency', [AgencyController::class, 'index']);
     Route::get('/agency/{agency_id}', [AgencyController::class, 'show']);
@@ -88,10 +84,10 @@ Route::middleware('lang')->group(function () {
     Route::get('/fare_rules/{fare_id}', [FareRuleController::class, 'show']);
 
     Route::get('/map/trains', [MapController::class, 'trains']);
+    Route::get('/map/stations', [MapController::class, 'stations']);
     Route::get('/map/gps-positions', [MapController::class, 'gpsPositions']);
     Route::get('/map/trains/{trainId}/history', [MapController::class, 'history']);
     Route::get('/map/train-route/{trip_id}', [MapController::class, 'route']);
 });
-
 
 Route::post('/train-positions', [TrainPositionController::class, 'store'])->middleware('train.tracker');
