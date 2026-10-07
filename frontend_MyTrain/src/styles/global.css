@@ -209,3 +209,51 @@ a {
   background: #eceff1;
   color: var(--color-muted);
 }
+
+/* ---------- Train status (on time / delayed / cancelled) ---------- */
+
+.train-status {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge.is-on_time {
+  background: #e8f5e9;
+  color: var(--color-success);
+}
+
+.status-badge.is-delayed {
+  background: #fff4e0;
+  color: var(--color-warning);
+}
+
+.status-badge.is-cancelled {
+  background: #fdecea;
+  color: var(--color-danger);
+}
+
+.status-reason {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.time-delayed s,
+.time-cancelled {
+  color: var(--color-muted);
+  font-weight: 400;
+}
+
+.time-delayed strong {
+  color: var(--color-warning);
+}

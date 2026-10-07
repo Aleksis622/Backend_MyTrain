@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\BookingException;
 use App\Models\Journey;
 use App\Models\Ticket;
+use App\Models\TripStatus;
 use App\Models\User;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
@@ -24,6 +25,10 @@ class TicketService
 
         if (! $trip) {
             throw new BookingException('This train does not run between these stations on the selected date.');
+        }
+
+        if ($trip->status === TripStatus::CANCELLED) {
+            throw new BookingException('This train is cancelled on the selected date.');
         }
 
         if ($trip->price === null) {

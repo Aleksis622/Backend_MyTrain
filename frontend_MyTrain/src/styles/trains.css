@@ -122,3 +122,12 @@
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 12px;
 }
+
+/* A cancelled train stays in the list, faded, and can't be bought */
+.train-result.is-cancelled {
+  opacity: 0.7;
+}
+
+.train-result .train-status {
+  margin: 4px 0;
+}
