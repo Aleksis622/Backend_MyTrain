@@ -32,8 +32,17 @@ return [
         'url' => env('FRONTEND_URL', 'http://localhost:5173'),
     ],
 
-    'train_tracker' => [
-        'token' => env('TRAIN_TRACKER_TOKEN'),
+    // Premade admin account (database/seeders/AdminUserSeeder.php)
+    'admin' => [
+        'email' => env('ADMIN_EMAIL'),
+        'password' => env('ADMIN_PASSWORD'),
+    ],
+
+    // Stripe in test mode (https://dashboard.stripe.com/test/apikeys). The webhook secret
+    // comes from "stripe listen" locally, or from the webhook endpoint in the dashboard.
+    'stripe' => [
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
 
     'slack' => [

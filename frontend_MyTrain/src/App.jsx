@@ -4,6 +4,7 @@ import { AuthProvider } from "./context/Auth";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import RequireAuth from "./components/RequireAuth";
+import RequireAdmin from "./admin/RequireAdmin";
 
 import Home from "./pages/Home";
 import Departures from "./pages/Departures";
@@ -18,13 +19,13 @@ import Account from "./pages/profile/Account";
 import Tickets from "./pages/profile/Tickets";
 
 import Payment from "./pages/Payment";
-import FakeProvider from "./pages/FakeProvider";
-import PaymentSuccess from "./pages/PaymentSuccess";
-import PaymentFailed from "./pages/PaymentFailed";
+import PaymentResult from "./pages/PaymentResult";
 
 import NotFound from "./pages/NotFound";
 
 const TrainMap = lazy(() => import("./pages/Map"));
+// The admin panel (and its Tailwind CSS) is a separate bundle, only loaded for admins.
+const AdminRoutes = lazy(() => import("./admin/AdminRoutes"));
 
 const loggedIn = (page) => <RequireAuth>{page}</RequireAuth>;
 
@@ -66,11 +67,20 @@ function App() {
           <Route path="/stops" element={<Navigate to="/departures" replace />} />
           <Route path="/routes" element={<Navigate to="/map" replace />} />
 
-          {/* Payments */}
+          {/* Payments: Stripe Checkout sends the user back to the result page */}
           <Route path="/payment/:ticketId" element={loggedIn(<Payment />)} />
-          <Route path="/payment/:paymentId/provider" element={loggedIn(<FakeProvider />)} />
-          <Route path="/payment/:paymentId/success" element={loggedIn(<PaymentSuccess />)} />
-          <Route path="/payment/:paymentId/failed" element={loggedIn(<PaymentFailed />)} />
+          <Route path="/payment/:paymentId/result" element={loggedIn(<PaymentResult />)} />
+
+          <Route
+            path="/admin/*"
+            element={
+              <RequireAdmin>
+                <Suspense fallback={<main className="page" />}>
+                  <AdminRoutes />
+                </Suspense>
+              </RequireAdmin>
+            }
+          />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
