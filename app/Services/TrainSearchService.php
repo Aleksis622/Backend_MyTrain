@@ -123,7 +123,7 @@ class TrainSearchService
     /**
      * The trip's delay/cancellation on that day (trip_statuses has no row when it runs on time).
      */
-    private function joinStatus(JoinClause $join, CarbonInterface $date): void
+    public function joinStatus(JoinClause $join, CarbonInterface $date): void
     {
         $join->on('trip_statuses.trip_id', '=', 'trips.trip_id')
             ->whereDate('trip_statuses.service_date', $date);
@@ -134,7 +134,7 @@ class TrainSearchService
      *
      * @return list<Expression|string>
      */
-    private function statusColumns(): array
+    public function statusColumns(): array
     {
         return [
             DB::raw("COALESCE(trip_statuses.status, '".TripStatus::ON_TIME."') as status"),

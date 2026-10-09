@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             CalendarDatesSeeder::class,
             FareAttributesSeeder::class,
             FareRulesSeeder::class,
-            TrainSeeder::class,
+            AdminUserSeeder::class,
         ]);
     }
 }

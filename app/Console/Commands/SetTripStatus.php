@@ -4,11 +4,11 @@ namespace App\Console\Commands;
 
 use App\Models\Trip;
 use App\Models\TripStatus;
+use App\Services\TripStatusService;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Cache;
 
 /**
  * Examples:
@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Cache;
 #[Description('Mark a train as delayed or cancelled for one day, or back on time')]
 class SetTripStatus extends Command
 {
-    public function handle(): int
+    public function handle(TripStatusService $statuses): int
     {
         $tripId = $this->argument('trip_id');
         $status = $this->argument('status');
@@ -50,21 +50,7 @@ class SetTripStatus extends Command
             return self::FAILURE;
         }
 
-        if ($status === TripStatus::ON_TIME) {
-            TripStatus::where('trip_id', $tripId)->whereDate('service_date', $date)->delete();
-        } else {
-            TripStatus::updateOrCreate(
-                ['trip_id' => $tripId, 'service_date' => $date->toDateString()],
-                [
-                    'status' => $status,
-                    'delay_minutes' => $status === TripStatus::DELAYED ? $minutes : 0,
-                    'reason' => $this->option('reason'),
-                ],
-            );
-        }
-
-        // The map caches train positions for a few seconds.
-        Cache::forget('map.timetable-positions');
+        $statuses->set($tripId, $date, $status, $minutes, $this->option('reason'));
 
         $this->info("Trip {$tripId} on {$date->toDateString()}: {$status}".($status === TripStatus::DELAYED ? " (+{$minutes} min)" : ''));
 

@@ -7,6 +7,7 @@ use App\Models\StopTime;
 use App\Models\TripStatus;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -18,6 +19,16 @@ use Illuminate\Support\Facades\DB;
 class TimetablePositionService
 {
     public function __construct(private TrainSearchService $trains) {}
+
+    /**
+     * Positions right now, cached for 10 seconds (the map and the admin dashboard ask often).
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function current(): array
+    {
+        return Cache::remember('map.timetable-positions', 10, fn () => $this->positionsAt(now())->all());
+    }
 
     /**
      * @return Collection<int, array<string, mixed>>

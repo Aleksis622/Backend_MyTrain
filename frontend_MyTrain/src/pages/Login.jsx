@@ -22,9 +22,9 @@ function Login() {
     setLoading(true);
 
     try {
-      await login(email, password);
-      // Go back to the page that sent us here (e.g. "Buy ticket"), else the profile.
-      navigate(location.state?.from || "/profile", { replace: true });
+      const user = await login(email, password);
+      // Go back to the page that sent us here (e.g. "Buy ticket"), else the profile (admins: the admin panel).
+      navigate(location.state?.from || (user.is_admin ? "/admin" : "/profile"), { replace: true });
     } catch (err) {
       setError(getErrorMessage(err, t("common.error")));
     } finally {

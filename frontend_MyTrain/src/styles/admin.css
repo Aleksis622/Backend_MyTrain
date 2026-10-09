@@ -1,0 +1,35 @@
+/*
+ * Tailwind for the admin panel only, imported by AdminLayout.
+ * - No "preflight" reset, so the rest of the site keeps its current look.
+ * - Utilities are not in a CSS layer, so classes like text-ink still win over
+ *   global.css element rules such as "a { color }".
+ * - Classes are only generated for files under src/admin.
+ */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" source(none);
+@source "../admin";
+
+/*
+ * The project's colors from global.css as Tailwind colors (bg-brand, text-ink, text-subtle, bg-card, border-line...),
+ * so the admin panel and the website always share one palette.
+ */
+@theme inline {
+  --color-brand: var(--color-primary);
+  --color-brand-dark: var(--color-primary-dark);
+  --color-brand-soft: var(--color-primary-soft);
+  --color-teal: var(--color-accent);
+  --color-teal-soft: var(--color-accent-soft);
+  --color-lilac: var(--color-lavender);
+  --color-ok: var(--color-success);
+  --color-ok-soft: var(--color-success-soft);
+  --color-warn: var(--color-warning);
+  --color-warn-soft: var(--color-warning-soft);
+  --color-bad: var(--color-danger);
+  --color-bad-soft: var(--color-danger-soft);
+  --color-ink: var(--color-text);
+  --color-subtle: var(--color-muted);
+  --color-line: var(--color-border);
+  --color-canvas: var(--color-bg);
+  --color-card: var(--color-surface);
+  --shadow-card: var(--shadow);
+}
