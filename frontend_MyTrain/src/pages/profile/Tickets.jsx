@@ -1,106 +1,133 @@
-import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useOutletContext, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { all as getTickets, cancel as cancelTicket } from "../../api/tickets";
-import { refund as refundPayment } from "../../api/payments";
-import { getErrorMessage, listFrom } from "../../api/api";
-import { formatDateTime, formatPrice } from "../../utils/format";
+import { all as getTickets, cancel as cancelTicket, refund as refundTicket } from "../../api/tickets";
+import { getErrorMessage } from "../../api/api";
+import TicketCard from "./TicketCard";
 
+const SCOPES = ["upcoming", "past", "cancelled"];
 
+/**
+ * "My tickets" tab: Upcoming / Past / Cancelled (?show=past), 10 at a time with "Load more".
+ */
 function Tickets() {
-  const { t, i18n } = useTranslation();
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { t } = useTranslation();
+  const { overview, reloadOverview } = useOutletContext();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const scope = SCOPES.includes(searchParams.get("show")) ? searchParams.get("show") : "upcoming";
 
-  const loadTickets = useCallback(
-    () =>
-      getTickets()
-        .then((res) => setTickets(listFrom(res)))
-        .catch((err) => setError(getErrorMessage(err, t("common.error"))))
-        .finally(() => setLoading(false)),
-    [t]
-  );
+  // Bumped after cancel / refund to load the list again from page 1.
+  const [version, setVersion] = useState(0);
+  const request = `${scope}#${version}`;
+  const [list, setList] = useState({ request: null, tickets: [], page: 1, lastPage: 1, error: "" });
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [actionError, setActionError] = useState("");
 
   useEffect(() => {
-    loadTickets();
-  }, [loadTickets]);
+    let cancelled = false;
 
-  
-  const runAction = async (confirmText, action) => {
-    if (!window.confirm(confirmText)) return;
+    getTickets({ scope, page: 1 })
+      .then(
+        ({ data }) =>
+          !cancelled &&
+          setList({ request, tickets: data.data, page: data.current_page, lastPage: data.last_page, error: "" }),
+      )
+      .catch(
+        (err) =>
+          !cancelled &&
+          setList({ request, tickets: [], page: 1, lastPage: 1, error: getErrorMessage(err, t("common.error")) }),
+      );
 
-    setError("");
+    return () => {
+      cancelled = true;
+    };
+  }, [scope, request, t]);
+
+  const loading = list.request !== request;
+
+  const loadMore = async () => {
+    setLoadingMore(true);
     try {
-      await action();
-      await loadTickets();
+      const { data } = await getTickets({ scope, page: list.page + 1 });
+      setList((previous) => ({
+        ...previous,
+        tickets: [...previous.tickets, ...data.data],
+        page: data.current_page,
+        lastPage: data.last_page,
+      }));
     } catch (err) {
-      setError(getErrorMessage(err, t("common.error")));
+      setActionError(getErrorMessage(err, t("common.error")));
+    } finally {
+      setLoadingMore(false);
     }
   };
 
-  if (loading) {
-    return <p>{t("common.loading")}</p>;
-  }
+  const runAction = async (confirmText, action) => {
+    if (!window.confirm(confirmText)) return;
+
+    setActionError("");
+    try {
+      await action();
+      setVersion((v) => v + 1);
+      reloadOverview();
+    } catch (err) {
+      setActionError(getErrorMessage(err, t("common.error")));
+    }
+  };
 
   return (
     <section>
-      {error && <p className="alert alert-error">{error}</p>}
-      {tickets.length === 0 && <p className="muted">{t("tickets.empty")}</p>}
-
-      <div className="card-list">
-        {tickets.map((ticket) => {
-          const { journey, latest_payment: payment } = ticket;
-
-          return (
-            <div key={ticket.id} className="card">
-              <h3>
-                {journey?.from_stop?.stop_name} → {journey?.to_stop?.stop_name}
-              </h3>
-
-              <p>
-                <span className={`badge badge-${ticket.status}`}>
-                  {t(`tickets.status.${ticket.status}`)}
-                </span>
-              </p>
-              <p>
-                {t("tickets.departure")}: {formatDateTime(journey?.departure_time, i18n.language)}
-              </p>
-              <p>
-                {t("tickets.price")}: {formatPrice(ticket.price, ticket.currency)}
-              </p>
-              <p className="muted">
-                {t("tickets.code")}: {ticket.ticket_code}
-              </p>
-
-              <div className="card-actions">
-                {ticket.status === "pending" && (
-                  <>
-                    <Link className="btn" to={`/payment/${ticket.id}`}>
-                      {t("tickets.pay")}
-                    </Link>
-                    <button
-                      className="btn btn-outline"
-                      onClick={() => runAction(t("tickets.confirm_cancel"), () => cancelTicket(ticket.id))}
-                    >
-                      {t("tickets.cancel")}
-                    </button>
-                  </>
-                )}
-
-                {ticket.status === "paid" && payment?.status === "paid" && (
-                  <button
-                    className="btn btn-outline"
-                    onClick={() => runAction(t("tickets.confirm_refund"), () => refundPayment(payment.id))}
-                  >
-                    {t("tickets.refund")}
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
+      <div className="segmented" role="tablist">
+        {SCOPES.map((name) => (
+          <button
+            key={name}
+            type="button"
+            role="tab"
+            aria-selected={scope === name}
+            className={scope === name ? "active" : ""}
+            onClick={() => setSearchParams(name === "upcoming" ? {} : { show: name })}
+          >
+            {t(`profile.tab_${name}`)}
+            {overview && <span className="segmented-count">{overview.counts[name]}</span>}
+          </button>
+        ))}
       </div>
+
+      {(list.error || actionError) && <p className="alert alert-error">{list.error || actionError}</p>}
+      {loading && <p className="muted">{t("common.loading")}</p>}
+
+      {!loading && list.tickets.length === 0 && !list.error && (
+        <div className="card empty-state">
+          <p className="muted">{t(`profile.empty_${scope}`)}</p>
+          {scope === "upcoming" && (
+            <Link className="btn" to="/">
+              {t("profile.find_train")}
+            </Link>
+          )}
+        </div>
+      )}
+
+      {!loading && (
+        <div className="card-list">
+          {list.tickets.map((ticket) => (
+            <TicketCard
+              key={ticket.id}
+              ticket={ticket}
+              upcoming={scope === "upcoming"}
+              onCancel={(tk) => runAction(t("tickets.confirm_cancel"), () => cancelTicket(tk.id))}
+              onRefund={(tk) => runAction(t("tickets.confirm_refund"), () => refundTicket(tk.id))}
+            />
+          ))}
+        </div>
+      )}
+
+      {!loading && list.page < list.lastPage && (
+        <div className="load-more">
+          <button className="btn btn-outline" onClick={loadMore} disabled={loadingMore}>
+            {loadingMore ? t("common.loading") : t("profile.load_more")}
+          </button>
+        </div>
+      )}
     </section>
   );
 }

@@ -46,3 +46,365 @@
   color: var(--color-primary);
   font-weight: 600;
 }
+
+/* ---------- Header: avatar, name, numbers ---------- */
+
+.profile-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.profile-who {
+  flex: 1;
+  min-width: 180px;
+}
+
+.profile-who h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.profile-who p {
+  margin: 0;
+}
+
+.profile-since {
+  font-size: 13px;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 28px;
+  margin: 0;
+  text-align: center;
+}
+
+.profile-stats dt {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.profile-stats dd {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+/* ---------- Next trip ---------- */
+
+.next-trip {
+  margin-bottom: 24px;
+  padding: 24px;
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+
+.next-trip.is-cancelled {
+  background: var(--color-danger);
+}
+
+.next-trip .muted,
+.next-trip .status-reason {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.next-trip-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.next-trip-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.next-trip .trip-line {
+  --line-color: rgba(255, 255, 255, 0.6);
+}
+
+.next-trip .trip-time s {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* The planned/expected colors are made for white cards; on blue everything stays white. */
+.next-trip .trip-time strong.is-late,
+.next-trip .trip-time strong.is-cancelled {
+  color: #fff;
+}
+
+.next-trip-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.next-trip-countdown {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.next-trip .card-actions {
+  margin-top: 0;
+}
+
+.next-trip .btn {
+  background: #fff;
+  color: var(--color-primary);
+}
+
+.next-trip .btn-outline {
+  background: transparent;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
+/* ---------- Trip line: 08:00 Riga ——1 h 15 min—— 09:15 Tukums ---------- */
+
+.trip-line {
+  --line-color: var(--color-border);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.trip-stop {
+  display: flex;
+  flex-direction: column;
+}
+
+.trip-stop.is-end {
+  text-align: right;
+}
+
+.trip-time {
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.trip-time s {
+  margin-right: 6px;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.trip-time strong.is-late {
+  color: var(--color-warning);
+}
+
+.trip-time strong.is-cancelled {
+  color: var(--color-muted);
+  text-decoration: line-through;
+}
+
+.trip-station {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.trip-duration {
+  position: relative;
+  text-align: center;
+  font-size: 12px;
+}
+
+.trip-duration::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  border-top: 2px dashed var(--line-color);
+}
+
+.trip-duration span {
+  position: relative;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-bg);
+  color: var(--color-muted);
+}
+
+.next-trip .trip-duration span {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* ---------- Ticket tabs: Upcoming / Past / Cancelled ---------- */
+
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+.segmented button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-muted);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.segmented button.active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.segmented-count {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--color-bg);
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.segmented button.active .segmented-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+.empty-state {
+  text-align: center;
+}
+
+.load-more {
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* ---------- Ticket card shaped like a boarding pass ---------- */
+
+.ticket-pass {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.ticket-pass-main {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 24px;
+  border-left: 5px solid var(--color-primary);
+}
+
+.ticket-pass.is-pending .ticket-pass-main {
+  border-left-color: var(--color-warning);
+}
+
+.ticket-pass.is-cancelled .ticket-pass-main,
+.ticket-pass.is-refunded .ticket-pass-main {
+  border-left-color: var(--color-border);
+}
+
+.ticket-pass-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+}
+
+/* The stub, torn off along a dashed line */
+.ticket-pass-stub {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 20px;
+  border-left: 2px dashed var(--color-border);
+  background: var(--color-bg);
+}
+
+.ticket-pass-price {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.ticket-pass-code {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.ticket-pass-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ticket-pass-actions .btn {
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+.ticket-pass.is-cancelled,
+.ticket-pass.is-refunded {
+  opacity: 0.75;
+}
+
+@media (max-width: 640px) {
+  .ticket-pass {
+    grid-template-columns: 1fr;
+  }
+
+  .ticket-pass-stub {
+    border-left: none;
+    border-top: 2px dashed var(--color-border);
+  }
+
+  .trip-time {
+    font-size: 18px;
+  }
+
+  .profile-stats {
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px;
+  }
+}

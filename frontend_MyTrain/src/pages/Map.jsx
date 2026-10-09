@@ -48,6 +48,32 @@ const stationsToGeoJson = (stations) => ({
   })),
 });
 
+const POPUP_MARGIN = 12; // px between an open popup and the map's edge
+
+/**
+ * Mapbox doesn't move the map for a popup, so one opened near an edge gets cut off.
+ * This limits its height to the map and pans the map until the whole card is visible.
+ */
+function keepPopupInView(map, popup) {
+  const element = popup?.getElement();
+  if (!element) return;
+
+  const mapBox = map.getContainer().getBoundingClientRect();
+  const content = element.querySelector(".mapboxgl-popup-content");
+  if (content) content.style.maxHeight = `${mapBox.height - POPUP_MARGIN * 2}px`;
+
+  const box = element.getBoundingClientRect();
+  const shift = (start, end, areaStart, areaEnd) => {
+    if (start < areaStart + POPUP_MARGIN) return start - areaStart - POPUP_MARGIN;
+    if (end > areaEnd - POPUP_MARGIN) return Math.min(end - areaEnd + POPUP_MARGIN, start - areaStart - POPUP_MARGIN);
+    return 0;
+  };
+  const dx = shift(box.left, box.right, mapBox.left, mapBox.right);
+  const dy = shift(box.top, box.bottom, mapBox.top, mapBox.bottom);
+
+  if (dx || dy) map.panBy([dx, dy], { duration: 300 });
+}
+
 // Slides a marker to its new position over ~0.5 s instead of jumping.
 function animateMarker(marker, [endLng, endLat], isDisposed) {
   const start = marker.getLngLat();
@@ -92,6 +118,8 @@ function TrainMap() {
     // Only one popup at a time; closing it (× or a click on the map) clears the selection.
     let popup = null;
     let popupTripId = null;
+    // /map?train=<trip_id> (e.g. "Show on map" in the profile): open that train with the first data.
+    let wantedTripId = new URLSearchParams(window.location.search).get("train");
 
     const map = new mapboxgl.Map({
       container: containerRef.current,
@@ -112,6 +140,8 @@ function TrainMap() {
       popup = next;
       popupTripId = tripId;
       next.on("close", () => {
+        // Leaving the page removes the map, which closes the popup too; the map is gone by then.
+        if (disposed) return;
         if (popup !== next) return; // replaced by another popup, not closed by the user
         popup = null;
         popupTripId = null;
@@ -120,6 +150,7 @@ function TrainMap() {
 
       previous?.remove();
       next.addTo(map);
+      requestAnimationFrame(() => !disposed && keepPopupInView(map, next));
     };
 
     const setSelectedMarker = (tripId) => {
@@ -151,6 +182,7 @@ function TrainMap() {
         selected.stops = data.stops;
         showRoute(map, data.stops, trains[tripId]);
         fitRoute(map, data.stops, mapboxgl);
+        map.once("moveend", () => !disposed && popupTripId === tripId && keepPopupInView(map, popup));
       } catch (err) {
         console.warn(`[map] could not load route for trip ${tripId}`, err);
       }
@@ -245,6 +277,12 @@ function TrainMap() {
             delete trains[tripId];
           }
         });
+
+        if (wantedTripId) {
+          // Opens the train's card and zooms to its route (if it is running right now).
+          if (trains[wantedTripId]) selectTrain(wantedTripId);
+          wantedTripId = null;
+        }
 
         // Keep the selected train's route and card in step with its new position.
         if (selected && !running.has(selected.tripId)) {

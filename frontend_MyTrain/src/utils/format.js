@@ -51,3 +51,28 @@ export function toMinutes(gtfsTime) {
   const [hours, minutes] = gtfsTime.split(":").map(Number);
   return hours * 60 + minutes;
 }
+
+// "Anna Bērziņa" -> "AB" (for avatars)
+export function initials(name = "") {
+  return (name ?? "")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join("");
+}
+
+// ISO date-time -> "08:15" in local time, optionally moved by a delay.
+export function formatClock(isoString, lang, delayMinutes = 0) {
+  if (!isoString) return "";
+
+  const time = new Date(new Date(isoString).getTime() + delayMinutes * 60000);
+  return time.toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
+}
+
+// ISO date-time -> "Fri, 10 Oct"
+export function formatDay(isoString, lang) {
+  if (!isoString) return "";
+
+  return new Date(isoString).toLocaleDateString(lang, { weekday: "short", day: "numeric", month: "short" });
+}

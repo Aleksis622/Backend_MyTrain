@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/Auth";
 import { resendVerificationEmail } from "../../api/auth";
@@ -12,6 +12,11 @@ function Account() {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  // Admins have a fuller "My account" page in the admin panel ("My tickets" stays here for them).
+  if (user.is_admin) {
+    return <Navigate to="/admin/account" replace />;
+  }
 
   const handleLogout = async () => {
     await logout();
