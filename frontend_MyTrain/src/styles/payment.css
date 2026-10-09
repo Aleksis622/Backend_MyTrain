@@ -27,3 +27,19 @@
   font-weight: 700;
   margin: 8px 0;
 }
+
+/* "Test mode: no real money is charged" box under the pay button */
+.payment-test-note {
+  margin-top: 16px;
+  text-align: left;
+}
+
+.payment-test-note p {
+  margin: 4px 0 8px;
+}
+
+.payment-test-note code {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}

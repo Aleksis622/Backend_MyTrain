@@ -105,10 +105,12 @@ function TrainSearch() {
 
     setError("");
     try {
+      // Buying the same train again returns the unpaid ticket that already exists.
       const res = await createTicket(trip, searchedDate);
       navigate(`/payment/${res.data.ticket.id}`);
     } catch (err) {
-      setError(getErrorMessage(err, t("common.error")));
+      // 403: the server only sells tickets to users with a confirmed email address.
+      setError(err.response?.status === 403 ? t("trains.verify_email_first") : getErrorMessage(err, t("common.error")));
     }
   };
 
