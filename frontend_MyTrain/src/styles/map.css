@@ -48,7 +48,7 @@
 
 .train-marker.is-selected .train-marker-body {
   transform: scale(1.25);
-  box-shadow: 0 0 0 4px rgba(11, 99, 206, 0.35), 0 2px 8px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 4px rgba(21, 112, 239, 0.35), 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 /* Arrow on the edge of the circle, rotated towards where the train is heading */
@@ -101,7 +101,9 @@
 .map-popup .mapboxgl-popup-content {
   padding: 0;
   border-radius: 12px;
-  overflow: hidden;
+  /* max-height is set from Map.jsx to fit the map; a card taller than that scrolls */
+  overflow-x: hidden;
+  overflow-y: auto;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   font-family: inherit;
 }
@@ -397,4 +399,11 @@
 .popup-departure.is-cancelled .popup-departure-time {
   color: var(--color-muted);
   text-decoration: line-through;
+}
+
+/* "Estimated from the timetable, not GPS · updated 14:32:10" under the train card */
+.popup-source {
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: var(--color-muted);
 }

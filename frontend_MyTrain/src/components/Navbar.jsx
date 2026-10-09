@@ -1,8 +1,8 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/Auth";
-import { changeLanguage } from "../api/auth";
-import { LANGUAGES } from "../lang";
+import Icon from "./Icon";
+import LanguageSwitch from "./LanguageSwitch";
 import "../styles/navbar.css";
 
 const LINKS = [
@@ -11,21 +11,19 @@ const LINKS = [
 ];
 
 function Navbar() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { user } = useAuth();
+  const { pathname } = useLocation();
 
-  const switchLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-
-    // Also save it on the account, so backend emails use the same language.
-    if (user) {
-      changeLanguage(lang).catch(() => {});
-    }
-  };
+  // The admin panel has its own sidebar and top bar.
+  if (pathname.startsWith("/admin")) return null;
 
   return (
     <nav className="nav">
       <Link to="/" className="nav-logo">
+        <span className="nav-logo-icon">
+          <Icon name="train" size={20} />
+        </span>
         MyTrain
       </Link>
 
@@ -38,26 +36,23 @@ function Navbar() {
           </li>
         ))}
 
+        {user?.is_admin && (
+          <li>
+            <NavLink to="/admin">{t("navigation.admin")}</NavLink>
+          </li>
+        )}
+
         <li>
           {user ? (
-            <NavLink to="/profile">{t("navigation.profile")}</NavLink>
+            // Admins manage their account in the admin panel.
+            <NavLink to={user.is_admin ? "/admin/account" : "/profile"}>{t("navigation.profile")}</NavLink>
           ) : (
             <NavLink to="/login">{t("navigation.login")}</NavLink>
           )}
         </li>
       </ul>
 
-      <div className="lang-switch">
-        {LANGUAGES.map((lang) => (
-          <button
-            key={lang}
-            className={i18n.language === lang ? "active" : ""}
-            onClick={() => switchLanguage(lang)}
-          >
-            {lang.toUpperCase()}
-          </button>
-        ))}
-      </div>
+      <LanguageSwitch />
     </nav>
   );
 }

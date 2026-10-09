@@ -32,7 +32,7 @@ export function addRouteLayers(map, beforeLayerId) {
     type: "line",
     filter: ["==", ["get", "part"], "ahead"],
     layout: { "line-cap": "round", "line-join": "round" },
-    paint: { "line-color": "#0b63ce", "line-width": 5 },
+    paint: { "line-color": "#1570ef", "line-width": 5 },
   });
 
   // Labels go on top of everything else (no beforeLayerId).
@@ -49,7 +49,7 @@ export function addRouteLayers(map, beforeLayerId) {
       "text-anchor": "bottom",
       "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
     },
-    paint: { "text-color": "#0b3d91", "text-halo-color": "#ffffff", "text-halo-width": 2 },
+    paint: { "text-color": "#0b4fb3", "text-halo-color": "#ffffff", "text-halo-width": 2 },
   });
 }
 

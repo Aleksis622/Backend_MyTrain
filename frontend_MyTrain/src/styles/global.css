@@ -1,18 +1,33 @@
 /* Shared look of the whole app: colors, layout, buttons, forms, cards. */
 
 :root {
-  --color-primary: #0b63ce;
-  --color-primary-dark: #084c9e;
-  --color-success: #2e7d32;
-  --color-danger: #c62828;
-  --color-warning: #b26a00;
-  --color-text: #1f2328;
-  --color-muted: #656d76;
-  --color-border: #d8dee4;
-  --color-bg: #f6f8fa;
+  /* Brand: blue main color, teal and lavender accents */
+  --color-primary: #1570ef;
+  --color-primary-dark: #0b5bd3;
+  --color-primary-soft: #e8f1fe;
+  --color-accent: #0e8070;
+  --color-accent-soft: #e3f6f3;
+  --color-lavender: #6366e0;
+
+  /* Status: on time / delayed / cancelled, paid / unpaid ... */
+  --color-success: #0b7a57;
+  --color-success-soft: #e3f6ee;
+  --color-warning: #b45309;
+  --color-warning-soft: #fdf0e1;
+  --color-danger: #c4213a;
+  --color-danger-soft: #fdecee;
+
+  /* Text and surfaces */
+  --color-text: #1d2433;
+  --color-muted: #6b7385;
+  --color-border: #e7e9f0;
+  --color-bg: #f4f6fa;
   --color-surface: #ffffff;
-  --radius: 8px;
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  --font-sans: "Manrope", system-ui, Arial, sans-serif;
+  --radius: 16px; /* cards, panels */
+  --radius-sm: 10px; /* buttons, inputs */
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 16px rgba(16, 24, 40, 0.05);
 }
 
 *,
@@ -23,7 +38,7 @@
 
 body {
   margin: 0;
-  font-family: Inter, system-ui, Arial, sans-serif;
+  font-family: var(--font-sans);
   color: var(--color-text);
   background: var(--color-bg);
   line-height: 1.5;
@@ -55,6 +70,9 @@ a {
 
 .page h1 {
   margin-top: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .muted {
@@ -62,9 +80,11 @@ a {
 }
 
 .footer {
-  padding: 16px;
+  padding: 20px 16px;
   text-align: center;
+  font-size: 14px;
   color: var(--color-muted);
+  background: var(--color-surface);
   border-top: 1px solid var(--color-border);
 }
 
@@ -72,14 +92,17 @@ a {
 
 .btn {
   display: inline-block;
-  padding: 10px 18px;
+  padding: 10px 20px;
   border: none;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   background: var(--color-primary);
   color: #fff;
+  font: inherit;
   font-size: 15px;
+  font-weight: 600;
   text-decoration: none;
   cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
 }
 
 .btn:hover {
@@ -109,7 +132,7 @@ a {
 .btn-outline {
   background: transparent;
   color: var(--color-primary);
-  border: 1px solid var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
 }
 
 .btn-outline:hover {
@@ -137,8 +160,19 @@ a {
   padding: 10px 12px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
+  font: inherit;
   font-size: 15px;
+  border-radius: var(--radius-sm);
   background: var(--color-surface);
+}
+
+.form input:focus,
+.form select:focus,
+.search-form input:focus,
+.search-form select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
 }
 
 /* ---------- Cards and messages ---------- */
@@ -148,7 +182,7 @@ a {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 20px;
+  padding: 24px;
 }
 
 .card-list {
@@ -159,6 +193,7 @@ a {
 
 .card h3 {
   margin: 0 0 8px;
+  font-weight: 700;
 }
 
 .card p {
@@ -173,40 +208,51 @@ a {
 
 .alert {
   padding: 10px 14px;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   margin: 0 0 12px;
 }
 
 .alert-error {
-  background: #fdecea;
+  background: var(--color-danger-soft);
   color: var(--color-danger);
 }
 
 .alert-success {
-  background: #e8f5e9;
+  background: var(--color-success-soft);
   color: var(--color-success);
+}
+
+.alert-warning {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.alert-warning a {
+  color: inherit;
+  font-weight: 700;
 }
 
 .badge {
   display: inline-block;
-  padding: 2px 10px;
+  padding: 3px 10px;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
 }
 
 .badge-pending {
-  background: #fff4e0;
+  background: var(--color-warning-soft);
   color: var(--color-warning);
 }
 
 .badge-paid {
-  background: #e8f5e9;
+  background: var(--color-success-soft);
   color: var(--color-success);
 }
 
-.badge-cancelled {
-  background: #eceff1;
+.badge-cancelled,
+.badge-refunded {
+  background: var(--color-bg);
   color: var(--color-muted);
 }
 
@@ -221,7 +267,7 @@ a {
 
 .status-badge {
   display: inline-block;
-  padding: 1px 8px;
+  padding: 2px 9px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
@@ -229,17 +275,17 @@ a {
 }
 
 .status-badge.is-on_time {
-  background: #e8f5e9;
+  background: var(--color-success-soft);
   color: var(--color-success);
 }
 
 .status-badge.is-delayed {
-  background: #fff4e0;
+  background: var(--color-warning-soft);
   color: var(--color-warning);
 }
 
 .status-badge.is-cancelled {
-  background: #fdecea;
+  background: var(--color-danger-soft);
   color: var(--color-danger);
 }
 
@@ -256,4 +302,36 @@ a {
 
 .time-delayed strong {
   color: var(--color-warning);
+}
+
+/* ---------- Language switch (site navbar and admin top bar) ---------- */
+
+.lang-switch {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--color-bg);
+}
+
+.lang-switch button {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lang-switch button:hover {
+  color: var(--color-text);
+}
+
+.lang-switch button.active {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1);
 }
