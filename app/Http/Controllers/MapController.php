@@ -4,20 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Stop;
 use App\Models\StopTime;
-use App\Models\TrainPosition;
 use App\Models\Trip;
 use App\Services\TimetablePositionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
+/**
+ * The map shows positions ESTIMATED from the timetable (TimetablePositionService),
+ * moved by the delays and cancellations in trip_statuses. There is no live GPS feed.
+ */
 class MapController extends Controller
 {
     public function trains(TimetablePositionService $positions): JsonResponse
     {
-        return response()->json(
-            Cache::remember('map.timetable-positions', 10, fn () => $positions->positionsAt(now())->all())
-        );
+        return response()->json($positions->current());
     }
 
     /**
@@ -34,38 +34,6 @@ class MapController extends Controller
                 'stop_lon' => (float) $stop->stop_lon,
             ])
             ->all()));
-    }
-
-    public function gpsPositions(): JsonResponse
-    {
-        $latestPositions = TrainPosition::select('train_positions.*')
-            ->joinSub(
-                TrainPosition::select('train_id', DB::raw('MAX(reported_at) AS latest'))->groupBy('train_id'),
-                'lp',
-                function ($join) {
-                    $join->on('train_positions.train_id', '=', 'lp.train_id')
-                        ->on('train_positions.reported_at', '=', 'lp.latest');
-                }
-            )
-            ->with('train')
-            ->orderByDesc('reported_at')
-            ->get();
-
-        return response()->json($latestPositions);
-    }
-
-    public function history(int $trainId): JsonResponse
-    {
-        $history = TrainPosition::where('train_id', $trainId)
-            ->orderByDesc('reported_at')
-            ->limit(500)
-            ->get();
-
-        if ($history->isEmpty()) {
-            return response()->json(['error' => 'No position history found'], 404);
-        }
-
-        return response()->json($history);
     }
 
     /**

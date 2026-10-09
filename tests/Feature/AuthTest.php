@@ -68,12 +68,4 @@ class AuthTest extends TestCase
             return str_contains($notification->toMail($user)->actionUrl, '/reset-password?token=');
         });
     }
-
-    public function test_train_positions_require_tracker_token(): void
-    {
-        config(['services.train_tracker.token' => 'secret-token']);
-
-        $this->postJson('/api/train-positions', [])->assertUnauthorized();
-        $this->withToken('secret-token')->postJson('/api/train-positions', [])->assertUnprocessable();
-    }
 }

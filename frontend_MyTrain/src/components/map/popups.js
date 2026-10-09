@@ -130,6 +130,15 @@ export function trainPopup(train, { t, navigate }) {
         el("div", "popup-progress-track", bar),
         el("span", null, t("map.progress", { number: train.stop_number, total: train.stops_total })),
       ),
+      // Honest about the source: the position comes from the timetable (+ delays), not from GPS.
+      // The card is rebuilt on every refresh, so "now" is the time of the last update.
+      el(
+        "p",
+        "popup-source",
+        t("map.estimated_position", {
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+        }),
+      ),
     ),
     canSearch
       ? el(

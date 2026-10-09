@@ -5,13 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * One leg of a GTFS trip that a ticket is for: trip + from/to stop + departure/arrival time.
+ * The trip (trip_id) is the planned service from the timetable; no physical train is tracked.
+ */
 class Journey extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'trip_id',
-        'train_id',
         'from_stop_id',
         'to_stop_id',
         'departure_time',
@@ -26,11 +29,6 @@ class Journey extends Model
     public function trip()
     {
         return $this->belongsTo(Trip::class, 'trip_id', 'trip_id');
-    }
-
-    public function train()
-    {
-        return $this->belongsTo(Train::class);
     }
 
     public function fromStop()
